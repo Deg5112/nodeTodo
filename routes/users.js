@@ -1,18 +1,19 @@
 var express = require('express'); //require express again, just so we can use the router below
 var router = express.Router();  //router comes pre packages with express
-//passport
 var passport = require('passport');
+//Passport strategies
 var LocalStrategy = require('passport-local').Strategy;
+var FacebookStrategy = require('passport-facebook').Strategy;
 //include user model
 var User = require('../models/user.js');
 var configAuth = require('../config/auth');
 //routes here start at users/
 //GET
-router.get('/register', function(req,res){
+router.get('/register', function(req,res){  //user/register
     res.render('register');
 });
 
-router.get('/login', function(req,res){
+router.get('/login', function(req,res){  //user/login
    res.render('login');
 });
 
@@ -50,8 +51,7 @@ router.post('/register', function(req, res){
                 password: password
             }
         });
-
-
+        
         User.createUser(newUser, function(err, user){
             if(err){
                 //if there's an error it'll throw an error and stop the script
@@ -129,7 +129,6 @@ router.get('/logout', function(req,res,next){
 // Facebook will redirect the user back to the application at
 //require facebook authentication creds
 
-var FacebookStrategy = require('passport-facebook').Strategy;
 //facebook strategy
 passport.use(new FacebookStrategy({
         clientID: configAuth.facebookAuth.clientID,

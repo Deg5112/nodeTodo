@@ -14,26 +14,26 @@ mongoose.connect('mongodb://localhost/loginapp');
 var db = mongoose.connection;
 var nev = require('email-verification')(mongoose);  //node email verification.. requires mongoose as a dependency
 //configure nev
-var configEmailVerification = require('../config/gmailAuth');
-nev.configure({
-    verificationURL: 'http://myawesomewebsite.com/email-verification/${URL}',
-    persistentUserModel: User,
-    tempUserCollection: 'myawesomewebsite_tempusers',
-
-    transportOptions: {
-        service: 'Gmail',
-        auth: {
-            user: 'deg5112@gmail.com',
-            pass: 'mysupersecretpassword'
-        }
-    },
-    verifyMailOptions: {
-        from: 'Do Not Reply <myawesomeemail_do_not_reply@gmail.com>',
-        subject: 'Please confirm account',
-        html: 'Click the following link to confirm your account:</p><p>${URL}</p>',
-        text: 'Please confirm your account by clicking the following link: ${URL}'
-    }
-});
+var configEmailVerification = require('./config/gmailAuth');
+// nev.configure({
+//     verificationURL: 'http://myawesomewebsite.com/email-verification/${URL}',
+//     persistentUserModel: User,
+//     tempUserCollection: 'myawesomewebsite_tempusers',
+//
+//     transportOptions: {
+//         service: 'Gmail',
+//         auth: {
+//             user: 'deg5112@gmail.com',
+//             pass: 'mysupersecretpassword'
+//         }
+//     },
+//     verifyMailOptions: {
+//         from: 'Do Not Reply <myawesomeemail_do_not_reply@gmail.com>',
+//         subject: 'Please confirm account',
+//         html: 'Click the following link to confirm your account:</p><p>${URL}</p>',
+//         text: 'Please confirm your account by clicking the following link: ${URL}'
+//     }
+// });
 
 
 //init app

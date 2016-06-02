@@ -138,6 +138,7 @@ passport.use(new FacebookStrategy({
     },
     function(accessToken, refreshToken, profile, done) {
         process.nextTick(function(){
+            
             User.findOne({'facebook.id': profile.id}, function(err, user){  //user model
                if(err){
                    return done(err);  //if err throw err
@@ -174,7 +175,7 @@ passport.use(new FacebookStrategy({
 router.get('/auth/facebook', passport.authenticate('facebook', {scope: ['email']}));
 
 //just two different routes.. ^^ sends to facebook.. facebook sends backk too below with success or failure
-// 'callbackUrl': 'http://localhost:3000   /auth/facebook/callback'
+// 'callbackUrl': 'http://localhost:3000/auth/facebook/callback'
 router.get('/auth/facebook/callback',
     passport.authenticate('facebook', { successRedirect: '/',
         failureRedirect: '/users/login' }));

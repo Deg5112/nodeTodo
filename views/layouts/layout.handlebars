@@ -1,10 +1,12 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" ng-app="todo">
 <head>
     <meta charset="UTF-8">
     <title>LoginApp</title>
     <link rel='stylesheet' href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+
 </head>
 <body>
       <div class="container">
@@ -22,14 +24,12 @@
                       {{/unless}}
                   </ul>
               </nav>
-              <h3 class="text-muted">LoginApp</h3>
+              <h3 class="text-muted">{{user.local.name}}</h3>
           </div>
 
 
           <div class="jumbotron">
-              <h1> Jumbo head</h1>
-              <p class="lead">TODO LIST</p>
-              <p><a class="btn btn-lg btn-success" href="#" role="button">Sign Up Today</a></p>
+              <h1>Todo List</h1>
           </div>
 
           <div class="row">
@@ -47,5 +47,8 @@
               </div>
           </div>
       </div>
+<script src="/socket.io/socket.io.js"></script>
+<script type="text/javascript" src="/js/app.js"></script>
+
 </body>
 </html>

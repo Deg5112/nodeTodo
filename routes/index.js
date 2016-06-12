@@ -3,11 +3,11 @@ var router = express.Router(); //require the express router, comes prepackages w
 
 //GET homepage
 router.get('/', ensureAuthenticated, function(req, res){
-   res.render('index');
+   res.render('index', {auth: req.session.passport.user});
 });
 
 function ensureAuthenticated(req, res, next){
-   if(req.isAuthenticated()){ //if true.. continue to the dashboard.. next().. else.. direct to login page
+   if(req.isAuthenticated()){ //if true.. continue to the dashboard.. next().. else.. direct to login page, is logged in??
       return next();
    }else{
       req.flash('error_msg', 'You are not logged in');

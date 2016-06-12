@@ -4,7 +4,7 @@ var bcrypt = require('bcryptjs');  //required bcrypt right herrrrr
 
 //User Schema
 
-var UserSchema = mongoose.Schema({
+var UserSchema = mongoose.Schema({   //define data collection schema
     local: {
         username: {
             type: String,
@@ -16,9 +16,20 @@ var UserSchema = mongoose.Schema({
         email: {
             type: String
         },
+        encryptedEmail: {
+            type: String
+        },
         name: {
             type: String
-        }   
+        },
+        active:{
+            type: Boolean
+        },
+        
+        date: {
+            type: Date,
+            default: Date.now 
+        }
     },
     facebook: {
         id: String,
@@ -27,7 +38,6 @@ var UserSchema = mongoose.Schema({
         name: String
     }
 });
-
 //if you say module.exports = --->   and assign the model to a variable.. you can use user in other pages
 
 //                                       modelname , tableSchema
@@ -49,6 +59,19 @@ module.exports.createUser = function(newUser, callback){
     });
 };
 
+module.exports.verifyUser = function(encryptedEmail, callback){
+
+    User.update({
+            local:{$exists: true},
+            "local.encryptedEmail":encryptedEmail
+        },
+        {
+            $set:{
+                "local.active": true
+            }
+        }, callback);
+};
+
 module.exports.getUserByUsername = function(username, callback){
     console.log('username', username);
     var query = {
@@ -59,7 +82,6 @@ module.exports.getUserByUsername = function(username, callback){
 };
 
 module.exports.getUserById = function(id, callback){
-    
     User.findById(id, callback); //this looks for the id of record.. facebook/local has nothing to do with this
 };
 

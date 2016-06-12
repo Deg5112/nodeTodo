@@ -7,6 +7,58 @@ var FacebookStrategy = require('passport-facebook').Strategy;
 //include user model
 var User = require('../models/user.js');
 var configAuth = require('../config/auth');
+var mongoose = require('mongoose');// require mongoose
+var sendgrid  = require('sendgrid')('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'); //takes api key as parameter
+var Cryptr = require('cryptr');
+var cryptr = new Cryptr('myTotalySecretKey');
+//this authenticated creds passed in, to creds from the db
+//this is the middleware that we pass into, this is the local strategy
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+passport.use(new LocalStrategy(function(username, password, done) {
+    //user model methods have 2 params, what's passed in, and callback, that has 2 params, error, and whatever we want to pass back
+    
+    User.getUserByUsername(username, function(err, user){  //we checked the username, and the callback function does several checks
+        if(err) throw err; //if error
+
+        if(!user){  //if no user
+            return done(null, false, {message:'Unknown User'});
+        }
+        
+        User.comparePassword(password, user[0].local.password, function(err, isMatch){ //if there's a username, we'll have another method that compares pass
+
+            if(err) throw err;
+            if(isMatch){
+                console.log(user);
+                user[0].local.newFirstName = capitalizeFirstLetter(user[0].local.name);
+                console.log(user[0].local.newFirstName);
+                return done(null, user);
+            }else{
+                return done(null, false, {message: 'Invalid Password'})
+            }
+        });
+    });
+}));
+
+passport.serializeUser(function(user, done) {
+    if(user.facebook){
+        var userId = user['_id'];
+    }else{
+        var userId = user[0].id
+    }
+    done(null, userId);
+});
+
+passport.deserializeUser(function(id, done) {
+    //passport passes in the facebook id here.. we need to pass in the object id
+
+    User.getUserById(id, function(err, user) {
+        done(err, user);
+    });
+});
+
+
 //routes here start at users/
 //GET
 router.get('/register', function(req,res){  //user/register
@@ -17,8 +69,34 @@ router.get('/login', function(req,res){  //user/login
    res.render('login');
 });
 
+router.get('/verify/:encryptedEmail', function(req, res){
+   var encryptedEmail = req.params.encryptedEmail;
+    User.verifyUser(encryptedEmail,  function(err, mongoResponse){
+        if(err){
+            throw err;
+        }
+        if(mongoResponse){
+            if(mongoResponse.nModified == 1 && mongoResponse.n == 1){
+                req.flash('success_msg', 'Congratulations, you are verified! Login now to make a new list');
+                res.redirect('/users/login');
+            }
+            if(mongoResponse.nModified == 0 && mongoResponse.n == 1){
+                console.log('doc found, but value is same');
+            }
+            if(mongoResponse.nModified == 0 && mongoResponse.n == 0){
+                console.log('update failed');
+                //it expired.. have a resend activation link page.. they enter their email, and send to a new route
+                // that encrypts password and sends them a link, back to this route
+            }
+        }
+    });
+    
+//   find user who encrypted email matches the one passed in
 
+    //when found, change active equal to 1
 
+    //then redirect to login page
+});
 
 //POST
 router.post('/register', function(req, res){
@@ -39,19 +117,42 @@ router.post('/register', function(req, res){
     var errors = req.validationErrors();
     
     if(errors){
-        console.log(errors);
         res.render('register', {errors: errors} );
     }else{
         //if no errors, we'll make a new user object with the schema of user created in model
+
+        var encryptedEmailString = cryptr.encrypt(email);
+        
         var newUser = new User({
             local:{
                 name: name,
                 email: email,
                 username: username,
-                password: password
+                password: password,
+                active: 0,
+                encryptedEmail:encryptedEmailString
             }
         });
-        
+
+        //email varification TODO
+        var verificationHref = 'http://localhost:3000/users/verify/'+encryptedEmailString;
+        var html =
+            "<h1 style='text-align: center;'>Thank you for registering to David's list</h1>"
+            +"<h2 style='text-align: center;'>a list that always gets bigger and better!</h2>"
+            +"<a href="+verificationHref+">Please click here to verify your account</a>"
+         
+
+        sendgrid.send({
+            to:       'deg5112@gmail.com',
+            from:     'no-reply@nodeTodo.com',
+            subject:  'Hello World',
+            html:     html
+        }, function(err, json) {
+            if (err) { return console.error(err); }
+            console.log(json);
+        });
+       
+        //send email above with activation link, then create user with encrypted password that expires
         User.createUser(newUser, function(err, user){
             if(err){
                 //if there's an error it'll throw an error and stop the script
@@ -61,56 +162,10 @@ router.post('/register', function(req, res){
             //if no error it'll just console log the user
             console.log(user, 'user entered in db');
         });
-
-        req.flash('success_msg', 'You are registered and can now login');
-
+        req.flash('success_msg', 'Registration successful, please check your email for An activation link');
         res.redirect('/users/login');
     }
 });
-//this authenticated creds passed in, to creds from the db
-//this is the middleware that we pass into, this is the local strategy
-passport.use(new LocalStrategy(function(username, password, done) {
-        //user model methods have 2 params, what's passed in, and callback, that has 2 params, error, and whatever we want to pass back
-     User.getUserByUsername(username, function(err, user){  //we checked the username, and the callback function does several checks
-        if(err) throw err; //if error
-
-        if(!user){  //if no user
-            return done(null, false, {message:'Unknown User'});
-        }
-         console.log('currentuser', user);
-        User.comparePassword(password, user[0].local.password, function(err, isMatch){ //if there's a username, we'll have another method that compares pass
-           
-            if(err) throw err;
-             if(isMatch){
-                 return done(null, user);
-             }else{
-                 return done(null, false, {message: 'Invalid Password'})
-             }
-         });
-     });
-}));
-
-
-
-passport.serializeUser(function(user, done) {
-    console.log('serial user', user);
-    if(user.facebook){
-        var userId = user['_id'];
-    }else{
-        var userId = user[0].id
-    }
-    done(null, userId);
-});
-
-passport.deserializeUser(function(id, done) {
-    console.log('got to deserial');
-    //passport passes in the facebook id here.. we need to pass in the object id
-    
-    User.getUserById(id, function(err, user) {
-        done(err, user);
-    });
-});
-
 
 router.post('/login', passport.authenticate('local', {successRedirect: '/', failureRedirect: '/users/login', failureFlash: true}),
     function(req, res){
@@ -135,7 +190,7 @@ passport.use(new FacebookStrategy({
         clientSecret: configAuth.facebookAuth.clientSecret,
         callbackURL: configAuth.facebookAuth.callbackUrl,
         profileFields: ['email', 'first_name', 'last_name']
-    },
+    },  //callback below
     function(accessToken, refreshToken, profile, done) {
         process.nextTick(function(){
             
@@ -148,7 +203,8 @@ passport.use(new FacebookStrategy({
                 }
                 else{  //login is good but doesn't match any records in mongodb
                     console.log(profile);
-                    var newUser = new User({
+                    
+                    var newUser = new User({  
                         facebook:{
                             id: profile.id,
                             token: accessToken,

@@ -15,9 +15,10 @@
     <div class="row">
         <div class="col-xs-12" ng-repeat="item in lC.list">
             <div class="well">
-                <div class="text">
-                    <p><i class="fa fa-list-ul" aria-hidden="true"></i>\{{item.listTitle}}</p>
+                <div class="text">   <!--ng cloack that shit below anddd add the listItem id upon ajax success of creation of list item-->
+                    <p><i class="fa fa-list-ul" aria-hidden="true"></i>\{{item.listTitle}}<a href="/updateTask/\{{item._id}}"><i class="fa fa-pencil-square text-info" aria-hidden="true" ></i></a></p>
                 </div>
+
             </div>
         </div>
     </div>

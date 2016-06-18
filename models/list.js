@@ -1,5 +1,6 @@
 //MODELS!!
 var mongoose = require('mongoose');// require mongoose
+var ObjectId = require('mongodb').ObjectID;
 
 
 //User Schema
@@ -25,11 +26,27 @@ var ListSchema = mongoose.Schema({   //define data collection schema
 
 var List = module.exports = mongoose.model('List', ListSchema);
 
-
+//get all list for user
 module.exports.getList = function(UserId, callback){
     List.find({
         user_id: UserId
     }, callback);
+};
+
+module.exports.getListItem = function(listId, callback){
+  List.find({
+      _id: ObjectId(listId)
+  }, callback);
+};
+
+module.exports.updateList = function(listId, title, callback){
+  List.update({
+          _id: ObjectId(listId)
+      }, {
+      $set: {
+          listTitle: title
+      }
+  }, callback);
 };
 
 module.exports.createList= function(UserId, taskTitle, taskNotes){

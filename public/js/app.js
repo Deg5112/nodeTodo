@@ -16,7 +16,11 @@ app.controller('listController', function($scope, $http){
             self.getList();
         });
     };
-    
+
+    self.updateListItem = function(){
+        
+    };
+
     self.getList = function(){
         socket.emit('getList', {userId: self.userId});
     };

@@ -4,33 +4,39 @@
     <meta charset="UTF-8">
     <title>LoginApp</title>
     <link rel='stylesheet' href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
     <link rel="stylesheet" href="/css/style.css">
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
-
 </head>
 <body>
       <div class="container">
 
           <div class="header clearfix">
-              <nav>
-                  <ul class="nav nav-pills pull-right">
-                      {{#unless user}}
-                              <li role="presentation"><a href="/">Dashboard</a></li>
-                              <li role="presentation"><a href="/users/login">login</a></li>
-                              <li role="presentation"><a href="/users/auth/facebook">Login with Facebook</a></li>
-                              <li role="presentation"><a href="/users/register">register</a></li>
-                      {{else}}
-                              <li role="presentation"><a href="/users/logout">logout</a></li>
-                      {{/unless}}
-                  </ul>
+
+              <nav class="navbar navbar-default">
+                  <div class="container-fluid">
+
+                      <a class="navbar-brand" href="#">{{user.local.name}}</a>
+
+                      <ul class="nav nav-tabs pull-right">
+                          {{#unless user}}
+                              <li role="presentation" class="active"><a href="/users/login">Sign In</a></li>
+                              <li id ='fbLogin' role="presentation"><a href="/users/auth/facebook">Login w/ Facebook</a></li>
+                              <li role="presentation"><a href="/users/register">Register</a></li>
+                          {{else}}
+                              <li role="presentation"><a href="/users/logout">Sign Out</a></li>
+                          {{/unless}}
+                      </ul>
+                  </div>
               </nav>
-              <h3 class="text-muted">{{user.local.name}}</h3>
+
           </div>
 
-
-          <div class="jumbotron">
-              <h1>Todo List</h1>
-          </div>
+        {{#unless user}}
+            <div class="jumbotron">
+                <h1>Todo List</h1>
+            </div>
+        {{/unless}}
 
           <div class="row">
               <div class="col-lg-12">

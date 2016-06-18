@@ -27,7 +27,6 @@ passport.use(new LocalStrategy(function(username, password, done) {
         }
         
         User.comparePassword(password, user[0].local.password, function(err, isMatch){ //if there's a username, we'll have another method that compares pass
-
             if(err) throw err;
             if(isMatch){
                 console.log(user);

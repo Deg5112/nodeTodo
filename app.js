@@ -17,6 +17,10 @@ var app = express();
 var server = require('http').createServer(app);
 var io = require('socket.io').listen(server);
 //view engine
+//include listmodel and task model, you'll split this w/ io listeners up later with module.exports/require
+var List = require('./models/list.js');
+
+
 app.set('views', path.join(__dirname, 'views'));  //__dirname is root directory.. saying views is set to views directory
 app.engine('handlebars', exphbs({defaultLayout:'layout'}));  //defining express templating engine to handlebars.. 2nd param is what the default layout is from the views folders
 app.set('view engine', 'handlebars');
@@ -66,6 +70,9 @@ app.use(function(req, res, next){
 var routes = require('./routes/index');
 var users = require('./routes/users');  //everything in this file gets hit once we require it
 var tasks = require('./routes/tasks');
+
+
+
 app.use('/', routes);  //routes defined for '/', will be directed to routes directory/index
 app.use('/users', users); //routes defined for users will be directed to routes directory/users directory
 app.use('/tasks', tasks);
@@ -75,14 +82,39 @@ server.listen(app.get('port'), function(){
     console.log('Server started on port '+ app.get('port'));
 });
 
-io.on('connection', function(socket){
+io.sockets.on('connection', function(socket){
     console.log('sockets on backend connected');
-    socket.on('createTask', function(data){
-        //add task to db
+    socket.on('createListItem', function(data){
+        console.log('init data', data);
+        var listItem = new List({
+            user_id: data.userId,
+            listTitle: data.listItem.listTitle
+        });
+        console.log(listItem.listTitle);
+        
+       
+        listItem.save();
+
         console.log(data);
-       socket.emit('taskCreationSuccess', data) ;
+        io.sockets.emit('listCreationSuccess', data); //ideally you'll want to emit this to only to the room the socket is in for that list
+    });
+    socket.on('getList', function(data){
+        var returnObj = {};
+       List.getList(data.userId, function(err, response){
+
+           var stringify = JSON.stringify(response);
+           console.log(stringify);
+           io.sockets.emit('getListResponse',stringify);
+       });
+        
     });
 });
+
+// io.sockets.on('connection', function(socket){
+//     socket.on('send message', function(data){
+//         io.sockets.emit('new message', data);
+//     })
+// });
 
 // app.listen(app.get('port'), function(){
 //    console.log('Server started on port '+ app.get('port'));

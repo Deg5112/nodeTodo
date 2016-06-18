@@ -7,3 +7,19 @@ li.task-item {
 #task-list{
     list-style-type: none;
 }
+
+.well {
+    padding: 0px;
+    margin-bottom: 0px;
+}
+
+.well p{
+    margin: 0;
+}
+.well:hover {
+    cursor: pointer;
+}
+
+i.fa.fa-list-ul {
+    margin: 3%;
+}

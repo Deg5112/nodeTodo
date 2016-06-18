@@ -5,6 +5,10 @@ router.get('/tasks', function(req, res){
     
 });
 
+router.post('/list', function(req, res){
+    
+});
+
 router.delete('task/:id', function(req, res){
     
 });

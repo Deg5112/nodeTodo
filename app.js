@@ -6,6 +6,7 @@ var exphbs = require('express-handlebars');
 var expressValidator = require('express-validator');
 var flash = require('connect-flash');
 var session = require('express-session');
+var MongoStore = require('connect-mongo')(session);
 var passport = require('passport');
 var localStrategy = require('mongoose');
 var mongo = require('mongodb');
@@ -19,6 +20,7 @@ var io = require('socket.io').listen(server);
 //view engine
 //include listmodel and task model, you'll split this w/ io listeners up later with module.exports/require
 var List = require('./models/list.js');
+var Todo = require('./models/todo.js')
 
 
 app.set('views', path.join(__dirname, 'views'));  //__dirname is root directory.. saying views is set to views directory
@@ -83,39 +85,61 @@ server.listen(app.get('port'), function(){
 });
 
 io.sockets.on('connection', function(socket){
-    console.log('sockets on backend connected');
+    
     socket.on('createListItem', function(data){
-        console.log('init data', data);
         var listItem = new List({
             user_id: data.userId,
-            listTitle: data.listItem.listTitle
+            listTitle: data.listItem.listTitle,
+            active: true
         });
-        console.log(listItem.listTitle);
         
-       
-        listItem.save();
+        listItem.save(function(err, object){
+            data.listItem._id = object._id;
+            console.log(data);  
+            io.sockets.emit('listCreationSuccess', data); //ideally you'll want to emit this to only to the room the socket is in for that list
+        });
 
-        console.log(data);
-        io.sockets.emit('listCreationSuccess', data); //ideally you'll want to emit this to only to the room the socket is in for that list
     });
+
     socket.on('getList', function(data){
         var returnObj = {};
        List.getList(data.userId, function(err, response){
-
            var stringify = JSON.stringify(response);
-           console.log(stringify);
            io.sockets.emit('getListResponse',stringify);
        });
         
     });
+
+    socket.on('deleteList', function(data){
+        List.deleteList(data, function(){
+            io.sockets.emit('deleteListResponse', data);    
+        });
+    });
+    
+    socket.on('getTodos', function(data){
+        console.log(data);
+        Todo.getTodos(data.listId, function(err, data){
+            console.log(data);
+            var stringify = JSON.stringify(data);
+            io.sockets.emit('getTodosResponse',stringify);
+        });
+       
+    });
+    
+    socket.on('createTodo', function(data){
+        var TodoItem = new Todo({
+            list_id: data.listId,
+            title: data.title
+        });
+        TodoItem.save(function(err, data){
+            if(err){
+                throw err
+            }
+           io.sockets.emit('createTodoResponse', data);
+        });
+    });
+    
+    
+    
 });
 
-// io.sockets.on('connection', function(socket){
-//     socket.on('send message', function(data){
-//         io.sockets.emit('new message', data);
-//     })
-// });
-
-// app.listen(app.get('port'), function(){
-//    console.log('Server started on port '+ app.get('port'));
-// });

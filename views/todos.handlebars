@@ -1,25 +1,24 @@
-<div ng-controller="listController as lC">
-    <h3>Lists Overview</h3>
+<div ng-controller="todoController as tC">
+    <h3>{{listTitle}} Todo's</h3>  <!--should end up saying "List Todos"-->
     <div class="row">
         <div class="col-xs-12">
             <div class="input-group">
-                <input type="text" class="form-control" name="task_title" ng-model="lC.listItem.listTitle">
+               <input type="text" class="form-control" name="" ng-model="tC.todoItem.title">
                <span class="input-group-btn">
-                    <button class="btn btn-success" type="button" ng-click="lC.createList('{{user._id}}')">Create</button>
+                    <button class="btn btn-success" type="button" ng-click="tC.createTodo('{{listId}}')">Create</button>
                </span>
             </div>
         </div>
     </div>
-
     <div class="row">
-        <div class="col-xs-12" ng-repeat="item in lC.list" ng-cloak >
-            <div class="well" ng-click="lC.getTodos()">
+        <div class="col-xs-12" ng-repeat="item in tC.todos" ng-cloak>
+            <div class="well">
                 <div class="text">   <!--ng cloack that shit below anddd add the listItem id upon ajax success of creation of list item-->
                     <div class="row list-row">
-                        <a href="/todo-items/\{{item._id}}/\{{item.listTitle}}">
+                        <a href="/todo-overview/\{{item._id}}">
                             <div class="col-xs-10 list-div">
                                 <p>
-                                    <i class="fa fa-list-ul" aria-hidden="true"></i>\{{item.listTitle}}
+                                    <i class="fa fa-list-ul" aria-hidden="true"></i>\{{item.title}}
                                 </p>
                             </div>
                         </a>

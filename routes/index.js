@@ -8,11 +8,10 @@ router.get('/', ensureAuthenticated, function(req, res){
 
 router.get('/userId', function(req, res){
    var userId = req.session.passport.user;
-   console.log('userId', userId);
    res.send(userId);
 });
-
-router.get('/updateTask/:listId', function(req, res){
+//list routes
+router.get('/updateList/:listId', function(req, res){
    var listId = req.params.listId;
    //mongo query to get current list object to template out the next page
    List.getListItem(listId, function(err, listItem){
@@ -26,18 +25,14 @@ router.get('/updateTask/:listId', function(req, res){
 router.post('/saveList/:listId', function(req, res){
    var listId = req.params.listId;
    var title = req.body.title
-   console.log('listId', listId);
-   console.log('req body', req.body);
    //in the future you can just add more props to this if they are defined or something like that
    List.updateList(listId, title, function(err, mongoResponse){
       if(err){
          throw err;
       }
-      console.log(mongoResponse);
       if(mongoResponse){
          if((mongoResponse.nModified == 1 && mongoResponse.n == 1)||(mongoResponse.nModified == 0 && mongoResponse.n == 1)){
             req.flash('success_msg', 'List Updated Successfully');
-            console.log('successs!');
             res.redirect('/');
          }
          if(mongoResponse.nModified == 0 && mongoResponse.n == 0){
@@ -45,8 +40,14 @@ router.post('/saveList/:listId', function(req, res){
          }
       }
    });
-
-
+});
+//todoItem routes
+router.get('/todo-items/:listId/:listTitle', ensureAuthenticated, function(req, res){
+   var listId = req.params.listId;
+   var listTitle = req.params.listTitle;
+   //why don't you get all of the items here, and pass it back to view
+   
+   res.render('todos', {listId: listId, listTitle:listTitle});
 });
 
 

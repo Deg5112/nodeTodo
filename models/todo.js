@@ -5,15 +5,15 @@ var mongoose = require('mongoose');// require mongoose
 //User Schema
 
 var TodoSchema = mongoose.Schema({   //define data collection schema
-        user_id: {
+        list_id: {
             type: String,
             index:true
         },
-        taskTitle: {
+        title: {
             type: String,
             index:true
         },
-        taskNotes: {
+        notes: {
             type: String,
             index:true
         },
@@ -28,15 +28,12 @@ var TodoSchema = mongoose.Schema({   //define data collection schema
 //                                       modelname , tableSchema
 
 var Todo = module.exports = mongoose.model('Todo', TodoSchema);
-
-
-module.exports.createTask = function(UserId, taskTitle, taskNotes){
-
-};
-
-//edit task
-module.exports.editTask = function(UserId, taskTitle, taskNotes){
-
+  
+//get
+module.exports.getTodos = function(listId, callback){
+    Todo.find({
+        list_id: listId
+    }, callback);
 };
 
 //delete task  //might want to soft delete in case you want to look at recently deleted

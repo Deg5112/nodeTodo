@@ -14,6 +14,9 @@ var ListSchema = mongoose.Schema({   //define data collection schema
         type: String,
         index:true
     },
+    active:{
+        type: Boolean
+    },
     updated_at: {
         type: Date,
         default: Date.now
@@ -29,7 +32,8 @@ var List = module.exports = mongoose.model('List', ListSchema);
 //get all list for user
 module.exports.getList = function(UserId, callback){
     List.find({
-        user_id: UserId
+        user_id: UserId,
+        active: 1
     }, callback);
 };
 
@@ -59,6 +63,12 @@ module.exports.editList = function(UserId, taskTitle, taskNotes){
 };
 
 //delete task  //might want to soft delete in case you want to look at recently deleted
-module.exports.deleteList = function(mongoTaskId){
-
+module.exports.deleteList = function(list, callback){
+    List.update({
+        _id: ObjectId(list.itemId)
+    }, {
+        $set: {
+            active: 0
+        }
+    }, callback);
 };

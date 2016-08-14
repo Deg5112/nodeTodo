@@ -104,6 +104,7 @@ router.post('/register', function(req, res){
     var username = req.body.username;
     var password = req.body.password;
     var password2 = req.body.password2;
+    
 //   express validation validation, so express allows us to use the methods below
     //  checkbody is a method that takes 2 arguements, name of field, and error message.. chain method after that to define rules
     req.checkBody('name', 'Name is required').notEmpty();
@@ -116,7 +117,61 @@ router.post('/register', function(req, res){
     var errors = req.validationErrors();
     
     if(errors){
-        res.render('register', {errors: errors} );
+        console.log(errors);
+        var finalErrors = {
+            name:{
+                bool: false,
+                msg:null
+            },
+            email:{
+                bool: false,
+                msg:null
+            },
+            username:{
+                bool: false,
+                msg:null
+            },
+            password:{
+                bool: false,
+                msg:null
+            },
+            password2:{
+                bool: false,
+                msg:null
+            }
+        };
+        var length = errors.length;
+        for(var x = 0; x<length; x++){
+            
+            if(errors[x].param == 'name'){
+                finalErrors.name.bool = true;
+                finalErrors.name.msg = errors[x].msg;
+            }
+            
+            if(errors[x].param == 'email'){
+                finalErrors.email.bool = true;
+                finalErrors.email.msg = errors[x].msg;
+            }
+            
+            if(errors[x].param == 'username'){
+                finalErrors.username.bool = true;
+                finalErrors.username.msg = errors[x].msg;
+            }
+            
+            if(errors[x].param == 'password'){
+                finalErrors.password.bool = true;
+                finalErrors.password.msg = errors[x].msg;
+            }
+            
+            if(errors[x].param == 'password2'){
+                finalErrors.password2.bool = true;
+                finalErrors.password2.msg = errors[x].msg;
+            }
+            
+        }
+        
+        console.log(finalErrors);
+        res.render('register', {errors: finalErrors, prevEntries: req.body} );
     }else{
         //if no errors, we'll make a new user object with the schema of user created in model
 

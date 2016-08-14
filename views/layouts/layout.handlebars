@@ -3,56 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <title>LoginApp</title>
-    <link rel='stylesheet' href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+    <!--<link rel='stylesheet' href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">-->
+    <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">-->
     <link rel="stylesheet" href="/css/style.css">
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+
+    <!-- Compiled and minified CSS -->
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!--Import materialize.css-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/css/materialize.min.css">
+
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/js/materialize.min.js"></script>
 </head>
-<body>
-      <div class="container">
+<script>$(function(){
+    $(".button-collapse").sideNav();
+})
+</script>
+<body ng-controller="mainController as mC">
 
           <div class="header clearfix">
+              <nav>
+                  <div class="nav-wrapper">
+                      <a href="#!" class="brand-logo">Todo List</a>
+                      <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
 
-              <nav class="navbar navbar-default">
-                  <div class="container-fluid">
+                      <ul class="right hide-on-med-and-down">
 
-                      <a class="navbar-brand" href="#" >{{user.local.name}}</a>
-
-                      <ul class="nav nav-tabs pull-right">
                           {{#unless user}}
-                              <li role="presentation" class="active"><a href="/users/login">Sign In</a></li>
-                              <li id ='fbLogin' role="presentation"><a href="/users/auth/facebook">Login w/ Facebook</a></li>
-                              <li role="presentation"><a href="/users/register">Register</a></li>
+                              <li role="presentation" class="\{{mC.returnNavClass('login') ? 'active' : ''}}"><a href="/users/login">Sign In</a></li>
+                              <li id ='fbLogin' data-ng-class=""><a href="/users/auth/facebook">Login w/ Facebook</a></li>
+                              <li role="presentation" class="\{{mC.returnNavClass('register') ? 'active' : ''}}"><a href="/users/register">Register</a></li>
+                          {{else}}
+                              <li role="presentation" ><a href="/users/logout">Sign Out</a></li>
+                          {{/unless}}
+                      </ul>
+                      <ul class="side-nav" id="mobile-demo">
+                          <li class="logo-container">
+                              <img id="mobile-logo" src="http://www.pocketmeta.com/wp-content/uploads/2015/02/Do-Note-Icon.png">
+                          </li>
+                          {{#unless user}}
+                              <li role="presentation" class="active" data-ng-class="mC.getClass()"><a href="/users/login">Sign In</a></li>
+                              <li id ='fbLogin'  data-ng-class="mC.getClass()"><a href="/users/auth/facebook">Login w/ Facebook</a></li>
+                              <li role="presentation" data-ng-class="mC.getClass()"><a href="/users/register">Register</a></li>
                           {{else}}
                               <li role="presentation"><a href="/users/logout">Sign Out</a></li>
                           {{/unless}}
                       </ul>
                   </div>
               </nav>
-
           </div>
 
-        {{#unless user}}
-            <div class="jumbotron">
-                <h1>Todo List</h1>
-            </div>
-        {{/unless}}
-
           <div class="row">
-              <div class="col-lg-12">
+              <div class="col s12">
                   {{#if success_msg}}
-                      <div class="alert alert-success">{{success_msg}}</div>
+                      <input class="hide" id="successMsg" value="{{success_msg}}" >
                   {{/if}}
                   {{#if error_msg}}
-                      <div class="alert alert-danger">{{error_msg}}</div>
+                      <input class="hide" id="errorMsg" value="{{error_msg}}">
                   {{/if}}
                   {{#if error}}
-                      <div class="alert alert-danger">{{error}}</div>
+                      <input class="hide" id="msg-error" value="{{error}}">
                   {{/if}}
                   {{{body}}}
               </div>
           </div>
-      </div>
+
 <script src="/socket.io/socket.io.js"></script>
 <script type="text/javascript" src="/js/app.js"></script>
       <script type="text/javascript" src="/js/todo-controller.js"></script>

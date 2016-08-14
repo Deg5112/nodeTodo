@@ -1,35 +1,38 @@
 <div ng-controller="listController as lC">
-    <h3>Lists Overview</h3>
     <div class="row">
-        <div class="col-xs-12">
+        <div class="col col s12 m10 offset-m1 l8 offset-l2">
+            <h3>Lists Overview</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col col s12 m10 offset-m1 l8 offset-l2">
             <div class="input-group">
                 <input type="text" class="form-control" name="task_title" ng-model="lC.listItem.listTitle">
                <span class="input-group-btn">
-                    <button class="btn btn-success" type="button" ng-click="lC.createList('{{user._id}}')">Create</button>
+                    <button class="btn btn-success col s12" type="button" ng-click="lC.createList('{{user._id}}')">Create</button>
                </span>
             </div>
         </div>
     </div>
 
     <div class="row">
-        <div class="col-xs-12" ng-repeat="item in lC.list" ng-cloak >
-            <div class="well" ng-click="lC.getTodos()">
-                <div class="text">   <!--ng cloack that shit below anddd add the listItem id upon ajax success of creation of list item-->
-                    <div class="row list-row">
-                        <a href="/todo-items/\{{item._id}}/\{{item.listTitle}}">
-                            <div class="col-xs-10 list-div">
-                                <p>
-                                    <i class="fa fa-list-ul" aria-hidden="true"></i>\{{item.listTitle}}
-                                </p>
-                            </div>
-                        </a>
-                        <div class="col-xs-2" id="controls">
-                            <!--might have to use location service to change route-->
-                            <a href="/updateList/\{{item._id}}"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
-                            <i class="fa fa-trash-o" aria-hidden="true" ng-click="lC.deleteList(item._id, $index)"></i>
-                        </div>
-                    </div>
-                </div>
+        <div class="col col s12 m10 offset-m1 l8 offset-l2" ng-repeat="item in lC.list" ng-cloak >
+            <div ng-click="lC.getTodos()">
+                 <!--ng cloack that shit below anddd add the listItem id upon ajax success of creation of list item-->
+                <ul class="collection">
+                    <a href="/todo-items/\{{item._id}}/\{{item.listTitle}}">
+                    <li class="collection-item avatar" ng-click="lC.getTodos()">
+                        <img src="" alt="" class="circle">
+                        <span class="title">
+
+                            <i class="fa fa-list-ul" aria-hidden="true"></i>\{{item.listTitle}}
+
+                        </span>
+
+                        <a href="#!" class="secondary-content"><i class="material-icons">grade</i></a>
+                    </li>
+
+                </ul>
             </div>
         </div>
     </div>

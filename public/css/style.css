@@ -1,3 +1,21 @@
+.header{
+    color:#ee6e73;
+}
+
+#mobile-logo {
+    width: 40%;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+#toast-container {
+    top: auto !important;
+    right: auto !important;
+    bottom: 10%;
+    left:7%;
+}
+
 li.task-item {
     border: 1px solid black;
     border-radius: 5px;

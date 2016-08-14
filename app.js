@@ -20,7 +20,7 @@ var io = require('socket.io').listen(server);
 //view engine
 //include listmodel and task model, you'll split this w/ io listeners up later with module.exports/require
 var List = require('./models/list.js');
-var Todo = require('./models/todo.js')
+var Todo = require('./models/todo.js');
 
 
 app.set('views', path.join(__dirname, 'views'));  //__dirname is root directory.. saying views is set to views directory

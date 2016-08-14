@@ -1,12 +1,12 @@
 <div ng-controller="registerController as rC">
     <div class="row">
-        <div class="col s12 m10 offset-m1 l8 offset-l2">
-             <h2 class="header teal-text text-lighten-1">Register</h2>
+        <div class="col s12 m10 offset-m1 l6 offset-l3">
+             <h3 class="header teal-text text-lighten-1">Register</h3>
         </div>
     </div>
     <form method="post" action="/users/register">
         <div class="row">
-            <div class="col s12 m10 offset-m1 l8 offset-l2">
+            <div class="col s12 m10 offset-m1 l6 offset-l3">
                 <div class="input-field">
                     <input id="name" type="text" class="validate"  name="name"
                 {{#if prevEntries}}
@@ -21,7 +21,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col s12 m10 offset-m1 l8 offset-l2">
+            <div class="col s12 m10 offset-m1 l6 offset-l3">
                 <div class="input-field">
                     <input id="username" type="text" class="validate"  name="username"
                     {{#if prevEntries}}
@@ -36,7 +36,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col s12 m10 offset-m1 l8 offset-l2">
+            <div class="col s12 m10 offset-m1 l6 offset-l3">
                 <div class="input-field">
                     <input id="email" type="email" class="validate"  name="email"
                     {{#if prevEntries}}
@@ -51,7 +51,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col s12 m10 offset-m1 l8 offset-l2">
+            <div class="col s12 m10 offset-m1 l6 offset-l3">
                  <div class="input-field">
                     <input id="password"  type="password" class="validate" name="password"
                     {{#if prevEntries}}
@@ -66,7 +66,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col s12 m10 offset-m1 l8 offset-l2">
+            <div class="col s12 m10 offset-m1 l6 offset-l3">
                 <div class="input-field">
                     <input id="confirm-password" type="password" class="validate" name="password2"
                         {{#if prevEntries}}
@@ -81,8 +81,8 @@
             </div>
         </div>
         <div class="row">
-            <div class="s12">
-                <button type="submit" class="waves-effect waves-light btn col s12 m10 offset-m1 l8 offset-l2">Submit</button>
+            <div class="col s12 m10 offset-m1 l6 offset-l3">
+                <button type="submit" class="waves-effect waves-light btn col s12">Submit</button>
             </div>
         </div>
     </form>
@@ -91,17 +91,3 @@
 
 
 
-<div ng-click="lC.getTodos()">
-    <!--ng cloack that shit below anddd add the listItem id upon ajax success of creation of list item-->
-    <ul class="collection">
-        <a id="link" class="collection-item avatar" ng-href="/todo-items/\{{item._id}}/\{{item.listTitle}}"ng-repeat="item in lC.list" ng-click="lC.getTodos()">
-            <img src="" alt="" class="circle">
-                        <span class="title">
-                            <!--<i class="fa fa-list-ul" aria-hidden="true"></i>-->
-                            \{{item.listTitle}}
-                        </span>
-
-            <a href="#!" class="secondary-content"><i class="material-icons">grade</i></a>
-        </a>
-    </ul>
-</div>

@@ -22,7 +22,7 @@ passport.use(new LocalStrategy(function(username, password, done) {
     User.getUserByUsername(username, function(err, user){  //we checked the username, and the callback function does several checks
         if(err) throw err; //if error
 
-        if(!user){  //if no user
+        if(!user || user.length == 0){  //if no user
             return done(null, false, {message:'Unknown User'});
         }
         

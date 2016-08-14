@@ -8,7 +8,9 @@
     left: 50%;
     transform: translateX(-50%);
 }
-
+.brand-logo{
+    padding: 0 15px !important;
+}
 #toast-container {
     top: auto !important;
     right: auto !important;
@@ -21,6 +23,30 @@ li.task-item {
     border-radius: 5px;
     background-color: #798efe;
 }
+
+i.material-icons {
+    font-size: 2.8em;
+}
+
+
+.list-update {
+    position: absolute;
+    top: 20%;
+    right: 7%;
+}
+
+
+
+.list-delete {
+    position: absolute;
+    top: 20%;
+    right: 1%;
+}
+
+.list-delete:hover, .list-update:hover{
+    cursor: pointer;
+}
+
 .fa-trash-o{
     font-size: 2.25em;
     background-color: red;

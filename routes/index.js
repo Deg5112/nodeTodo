@@ -41,6 +41,42 @@ router.post('/saveList/:listId', function(req, res){
       }
    });
 });
+//update todo
+router.get('/updateTodo/:todoId', function(req, res){
+   var todoId = req.params.todoId;
+   console.log(todoId);
+
+   List.getTodoItem(todoId, function(err, listItem){
+      if(err){
+         throw err;
+      }
+      res.render('todo-update', {auth: req.session.passport.user, todoItem: todoItem[0]});
+   });
+   //mongo query to get current list object to template out the next page
+
+});
+
+//save todo
+router.post('/saveTodo/:todo', function(req, res){
+   var listId = req.params.listId;
+   var title = req.body.title
+   //in the future you can just add more props to this if they are defined or something like that
+   Todo.updateTodo(todoId, title, function(err, mongoResponse){
+      if(err){
+         throw err;
+      }
+      if(mongoResponse){
+         if((mongoResponse.nModified == 1 && mongoResponse.n == 1)||(mongoResponse.nModified == 0 && mongoResponse.n == 1)){
+            req.flash('success_msg', 'List Updated Successfully');
+            res.redirect('/');
+         }
+         if(mongoResponse.nModified == 0 && mongoResponse.n == 0){
+            console.log('update failed');
+         }
+      }
+   });
+});
+
 //todoItem routes
 router.get('/todo-items/:listId/:listTitle', ensureAuthenticated, function(req, res){
    var listId = req.params.listId;

@@ -6,25 +6,26 @@
     </div>
     <div class="row">
         <div class="col s12 m10 offset-m1 l8 offset-l2">
-            <div class="input-group">
-               <input type="text" class="form-control" name="" ng-model="tC.todoItem.title">
-               <span class="input-group-btn">
-                    <button class="btn waves-effect waves-light col s12" type="button" ng-click="tC.createTodo('{{listId}}')">Create</button>
-               </span>
+            <div class="input-field">
+               <input id="enter-todo" type="text" class="validate" name="" ng-model="tC.todoItem.title">
+                <label for="enter-todo">Enter New Todo Item</label>
+
+                <button class="btn waves-effect waves-light col s12" type="button" ng-click="tC.createTodo('{{listId}}')">Create</button>
+
             </div>
         </div>
     </div>
     <div class="row">
-        <div class="col s12 m10 offset-m1 l8 offset-l2" ng-repeat="item in tC.todos" ng-cloak>
-                <!--ng cloack that shit below anddd add the listItem id upon ajax success of creation of list item-->
+
+        <div class="col s12 m10 offset-m1 l8 offset-l2" ng-cloak>
             <ul class="collection">
-                <div style="position:relative;" ng-repeat="item in lC.list">
+                <div style="position:relative;" ng-repeat="item in tC.todos">
                     <a  class="collection-item avatar" href="/todo-overview/\{{item._id}}">
                         <i class="material-icons circle">view_list</i>
                         <span class="">
                             <h5>
                             <!--<i class="fa fa-list-ul" aria-hidden="true"></i>-->
-                                \{{item.listTitle}}
+                                \{{item.title}}
                                 </h5>
                         </span>
                         <p>
@@ -35,7 +36,7 @@
 
                     </a>
 
-                    <a href=/updateList/\{{item._id}}" class="list-update"><i class="material-icons">edit</i></a>
+                    <a href=/updateTodo/\{{item._id}}" class="list-update"><i class="material-icons">edit</i></a>
                     <i ng-click="lC.deleteList(item._id, $index)"  class="material-icons list-delete">delete</i>
                 </div>
             </ul>

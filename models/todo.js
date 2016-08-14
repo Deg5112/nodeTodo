@@ -36,7 +36,30 @@ module.exports.getTodos = function(listId, callback){
     }, callback);
 };
 
-//delete task  //might want to soft delete in case you want to look at recently deleted
-module.exports.deleteTask = function(mongoTaskId){
+module.exports.updateTodo = function(todoId, title, callback){
+    List.update({
+        _id: ObjectId(todoId)
+    }, {
+        $set: {
+            listTitle: title
+        }
+    }, callback);
+}
 
+module.exports.getTodoItem = function(todoId, callback){
+    Todo.find({
+        _id: ObjectId(todoId)
+    }, callback);
+};
+
+
+//delete task  //might want to soft delete in case you want to look at recently deleted
+module.exports.deleteTodo = function(todoId, callback){
+    List.update({
+        _id: ObjectId(todoId)
+    }, {
+        $set: {
+            active: 0
+        }
+    }, callback);
 };

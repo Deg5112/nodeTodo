@@ -17,17 +17,22 @@
     bottom: 10%;
     left:7%;
 }
+.list-item{
 
+}
 li.task-item {
     border: 1px solid black;
     border-radius: 5px;
     background-color: #798efe;
 }
 
-i.material-icons {
-    font-size: 2.8em;
-}
 
+i.material-icons.list-delete {
+    color: #ee6e73;
+}
+i.material-icons {
+    font-size: 2.5em;
+}
 
 .list-update {
     position: absolute;

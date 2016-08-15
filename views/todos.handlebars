@@ -19,25 +19,17 @@
 
         <div class="col s12 m10 offset-m1 l8 offset-l2" ng-cloak>
             <ul class="collection">
-                <div style="position:relative;" ng-repeat="item in tC.todos">
-                    <a  class="collection-item avatar" href="/todo-overview/\{{item._id}}">
+                <div class="todo-item" style="position:relative;" ng-repeat="item in tC.todos">
+                    <a  class="collection-item avatar" href="/updateTodo/\{{item._id}}">
                         <i class="material-icons circle">view_list</i>
                         <span class="">
                             <h5>
-                            <!--<i class="fa fa-list-ul" aria-hidden="true"></i>-->
                                 \{{item.title}}
-                                </h5>
+                            </h5>
                         </span>
-                        <p>
-
-                        </p>
-
-                        <!--might have to use location service to change route-->
-
                     </a>
-
-                    <a href=/updateTodo/\{{item._id}}" class="list-update"><i class="material-icons">edit</i></a>
-                    <i ng-click="lC.deleteList(item._id, $index)"  class="material-icons list-delete">delete</i>
+                    <a href="/updateTodo/\{{item._id}}" class="list-update"><i class="material-icons">edit</i></a>
+                    <i ng-click="tC.deleteTodo(item._id, $index)"  class="material-icons list-delete">delete</i>
                 </div>
             </ul>
 

@@ -20,23 +20,15 @@
         <div class="col col s12 m10 offset-m1 l8 offset-l2" ng-cloak >
                 <!--ng cloack that shit below anddd add the listItem id upon ajax success of creation of list item-->
             <ul class="collection">
-                <div style="position:relative;" ng-repeat="item in lC.list">
+                <div class="list-item" style="position:relative;" ng-repeat="item in lC.list">
                     <a  class="collection-item avatar" href="/todo-items/\{{item._id}}/\{{item.listTitle}}"  ng-click="lC.getTodos()">
                         <i class="material-icons circle">view_list</i>
-                            <span class="">
-                                <h5>
-                                <!--<i class="fa fa-list-ul" aria-hidden="true"></i>-->
-                                \{{item.listTitle}}
-                                    </h5>
-                            </span>
-                        <p>
-
-                        </p>
-
-                            <!--might have to use location service to change route-->
-
+                        <span class="">
+                            <h5>
+                            \{{item.listTitle}}
+                            </h5>
+                        </span>
                     </a>
-
                     <a href="/updateList/\{{item._id}}" class="list-update"><i class="material-icons">edit</i></a>
                     <i ng-click="lC.deleteList(item._id, $index)"  class="material-icons list-delete">delete</i>
                 </div>

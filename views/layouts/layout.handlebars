@@ -2,7 +2,7 @@
 <html lang="en" ng-app="todo">
 <head>
     <meta charset="UTF-8">
-    <title>LoginApp</title>
+    <title>Todo</title>
     <!--<link rel='stylesheet' href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">-->
     <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">-->
     <link rel="stylesheet" href="/css/style.css">
@@ -30,7 +30,6 @@
                       <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
 
                       <ul class="right hide-on-med-and-down">
-
                           {{#unless user}}
                               <li role="presentation" class="\{{mC.returnNavClass('login') ? 'active' : ''}}"><a href="/users/login">Sign In</a></li>
                               <li id ='fbLogin' data-ng-class=""><a href="/users/auth/facebook">Login w/ Facebook</a></li>

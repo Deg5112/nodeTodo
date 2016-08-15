@@ -8,7 +8,9 @@ var FacebookStrategy = require('passport-facebook').Strategy;
 var User = require('../models/user.js');
 var configAuth = require('../config/auth');
 var mongoose = require('mongoose');// require mongoose
-var sendgrid  = require('sendgrid')('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'); //takes api key as parameter
+var sendgrid  = require('sendgrid')(configAuth.sendGrid.user, configAuth.sendGrid.user); //takes api key as parameter
+console.log(sendgrid);
+
 var Cryptr = require('cryptr');
 var cryptr = new Cryptr('myTotalySecretKey');
 //this authenticated creds passed in, to creds from the db
@@ -203,7 +205,8 @@ router.post('/register', function(req, res){
             html:     html
         }, function(err, json) {
             if (err) { return console.error(err); }
-            console.log(json);
+            console.log('success! ', json);
+            return;
         });
        
         //send email above with activation link, then create user with encrypted password that expires

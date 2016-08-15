@@ -35,9 +35,15 @@ app.controller('todoController', function($scope, $http, $location){
     self.getTodos();
 
     self.deleteTodo = function(itemId, index){
-        console.log(index);
-        socket.emit('deleteList', {itemId: itemId, index: index});
+        
+        socket.emit('deleteTodo', {itemId: itemId, index: index});
     };
+
+    socket.on('deleteTodoResponse', function(data){
+        console.log('delete response', data);
+        self.todos.splice(data.index, 1);
+        $scope.$digest();
+    });
 
     socket.on('getTodosResponse', function(data){
         console.log('data', data);

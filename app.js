@@ -32,10 +32,18 @@ app.use(bodyParser.urlencoded({extended: false}));  //parses out ?name=
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));  //defining telling the app to include/use public folder
 //express session
+// app.use(session({               //using express session dependency to start sessions when users hit the app
+//     secret: 'secret',
+//     saveUnitialized: true,
+//     resave: true
+// }));
+
+//express session
 app.use(session({               //using express session dependency to start sessions when users hit the app
     secret: 'secret',
     saveUnitialized: true,
-    resave: true
+    resave: true,
+    store: new MongoStore({mongooseConnection: mongoose.connection})
 }));
 
 app.use(passport.initialize());     //to use passport, user authentication .. need to initialize it.
@@ -80,6 +88,30 @@ app.use('/users', users); //routes defined for users will be directed to routes 
 app.use('/tasks', tasks);
 
 app.set('port', (process.env.PORT || 3000));
+// process.on('uncaughtException', function (err) {
+//     console.log(err);
+//
+// });
+
+app.use(function(req, res, next){
+    res.status(404);
+
+    // respond with html page
+    if (req.accepts('html')) {
+        res.render('404', { url: req.url });
+        return;
+    }
+
+    // respond with json
+    if (req.accepts('json')) {
+        res.send({ error: 'Not found' });
+        return;
+    }
+
+    // default to plain-text. send()
+    res.type('txt').send('Not found');
+});
+
 server.listen(app.get('port'), function(){
     console.log('Server started on port '+ app.get('port'));
 });
@@ -129,7 +161,8 @@ io.sockets.on('connection', function(socket){
     socket.on('createTodo', function(data){
         var TodoItem = new Todo({
             list_id: data.listId,
-            title: data.title
+            title: data.title,
+            active: true
         });
         TodoItem.save(function(err, data){
             if(err){
@@ -138,7 +171,18 @@ io.sockets.on('connection', function(socket){
            io.sockets.emit('createTodoResponse', data);
         });
     });
-    
+
+    socket.on('deleteTodo', function(data){
+        console.log(data);
+        Todo.deleteTodo(data.itemId, function(err, response){
+            console.log(data);
+            var stringify = JSON.stringify(data);
+            io.sockets.emit('deleteTodoResponse',stringify);
+        });
+        
+        
+
+    });
     
     
 });

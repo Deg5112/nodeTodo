@@ -8,8 +8,12 @@ var FacebookStrategy = require('passport-facebook').Strategy;
 var User = require('../models/user.js');
 var configAuth = require('../config/auth');
 var mongoose = require('mongoose');// require mongoose
-var sendgrid  = require('sendgrid')(configAuth.sendGrid.user, configAuth.sendGrid.user); //takes api key as parameter
-console.log(sendgrid);
+// var sendgrid  = require('sendgrid')(configAuth.sendGrid.user, configAuth.sendGrid.user); //takes api key as parameter
+// console.log(sendgrid);
+var api_key = configAuth.mailgun.key; 
+var domain = 'davidgoodman.club';
+var mailgun = require('mailgun-js')({apiKey: api_key, domain: domain});
+
 
 var Cryptr = require('cryptr');
 var cryptr = new Cryptr('myTotalySecretKey');
@@ -82,12 +86,19 @@ router.get('/verify/:encryptedEmail', function(req, res){
                 res.redirect('/users/login');
             }
             if(mongoResponse.nModified == 0 && mongoResponse.n == 1){
+                //value already is set to true
                 console.log('doc found, but value is same');
+                //user is already active, please log in
+                req.flash('error', 'User is already active, please log in');
+                res.redirect('/users/login');
+                
             }
             if(mongoResponse.nModified == 0 && mongoResponse.n == 0){
                 console.log('update failed');
                 //it expired.. have a resend activation link page.. they enter their email, and send to a new route
                 // that encrypts password and sends them a link, back to this route
+                req.flash('error', 'Activation link is no longer active, please re-register');
+                res.redirect('/users/register');
             }
         }
     });
@@ -193,21 +204,32 @@ router.post('/register', function(req, res){
         //email varification TODO
         var verificationHref = 'http://localhost:3000/users/verify/'+encryptedEmailString;
         var html =
-            "<h1 style='text-align: center;'>Thank you for registering to David's list</h1>"
-            +"<h2 style='text-align: center;'>a list that always gets bigger and better!</h2>"
-            +"<a href="+verificationHref+">Please click here to verify your account</a>"
-         
+            "<div style='text-align: center;background-color:#ee6e73'></div>"
+            +"<h1>Thank you for registering to Todo</h1>"
+            +"<a href="+verificationHref+" style='position: absolute; left: 50%; transform: translateX(-50%);'>Please click here to verify your account</a>";
+        
+        var data = {
+            from: 'Todo APP <noreply@dgoody.mailgun.org>',
+            to: 'deg5112@gmail.com',
+            subject: 'Hello From Todo',
+            html: html
+        };
 
-        sendgrid.send({
-            to:       'deg5112@gmail.com',
-            from:     'no-reply@nodeTodo.com',
-            subject:  'Hello World',
-            html:     html
-        }, function(err, json) {
-            if (err) { return console.error(err); }
-            console.log('success! ', json);
-            return;
-        });
+        mailgun.messages().send(data, function (error, body) {
+            console.log(body);
+            console.log('sent!');
+        }); 
+
+        // sendgrid.send({
+        //     to:       'deg5112@gmail.com',
+        //     from:     'no-reply@nodeTodo.com',
+        //     subject:  'Hello World',
+        //     html:     html
+        // }, function(err, json) {
+        //     if (err) { return console.error(err); }
+        //     console.log('success! ', json);
+        //     return;
+        // });
        
         //send email above with activation link, then create user with encrypted password that expires
         User.createUser(newUser, function(err, user){

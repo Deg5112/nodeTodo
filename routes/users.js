@@ -13,6 +13,9 @@ var mongoose = require('mongoose');// require mongoose
 var api_key = configAuth.mailgun.key; 
 var domain = 'davidgoodman.club';
 var mailgun = require('mailgun-js')({apiKey: api_key, domain: domain});
+var os = require("os");
+var hostname = os.hostname();
+console.log('HOSTNAME', hostname);
 
 
 var Cryptr = require('cryptr');
@@ -204,9 +207,35 @@ router.post('/register', function(req, res){
         //email varification TODO
         var verificationHref = 'http://davidgoodman-node.club/users/verify/'+encryptedEmailString;
         var html =
-            "<div style='text-align: center;background-color:#ee6e73'></div>"
-            +"<h1>Thank you for registering to Todo</h1>"
-            +"<a href="+verificationHref+" style='position: absolute; left: 50%; transform: translateX(-50%);'>Please click here to verify your account</a>";
+            '<div style="margin:1% 3%;font-family: sans-serif;">'
+           +    '<div>'
+           +       '<div id="div1" style="display: inline-block; width: 49%;">'
+           +           '<h1 id="span"><img style="width:51px;vertical-align: middle;margin: 0 3% 0 0;" src="https://s3-us-west-2.amazonaws.com/slack-files2/avatars/2015-12-26/17403075280_024490441c688e6ab5f8_512.png">TODO</h1>'
+           +       '</div>'
+           +       '<div id="div2" style="display: inline-block; width: 49%;">'
+           +           '<span style="float:right;font-size: 21px;font-weight: bold;">Welcome, David</span>'
+           +       '</div>'
+           +   '</div>'
+           +   '<br>'
+           +   '<div style="border-bottom: 1px solid #e2e2e2; margin:2% 0;"></div>'
+           +   '<div>'
+           +       '<h3 style="text-decoration: underline">Welcome, David Goodman</h3>'
+           +   '</div>'
+           +   '<div>'
+           +       '<p style="font-size: 16px;">Thank you for signing up for todo. Please click the link below to activate your account</p>'
+           +   '</div>'
+           +   '<div id="linkrow" style="margin: 6% 0;">'
+           +       '<a id="activate" href=' + verificationHref + 'style="background-color:#ee6e73;padding: .7em;border-radius: 5px;color: white;text-decoration: none;">Activate Your Account!</a>'
+           +    '</div>'
+           + '</div>';
+
+
+
+            
+
+            // "<div style='text-align: center;background-color:#ee6e73'></div>"
+            // +"<h1>Thank you for registering to Todo</h1>"
+            // +"<a href="+verificationHref+" style='position: absolute; left: 50%; transform: translateX(-50%);'>Please click here to verify your account</a>";
         
         var data = {
             from: 'Todo APP <noreply@dgoody.mailgun.org>',
@@ -220,16 +249,6 @@ router.post('/register', function(req, res){
             console.log('sent!');
         }); 
 
-        // sendgrid.send({
-        //     to:       'deg5112@gmail.com',
-        //     from:     'no-reply@nodeTodo.com',
-        //     subject:  'Hello World',
-        //     html:     html
-        // }, function(err, json) {
-        //     if (err) { return console.error(err); }
-        //     console.log('success! ', json);
-        //     return;
-        // });
        
         //send email above with activation link, then create user with encrypted password that expires
         User.createUser(newUser, function(err, user){

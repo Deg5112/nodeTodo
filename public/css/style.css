@@ -2,6 +2,13 @@
     color:#ee6e73;
 }
 
+button{
+    height: 70px !important;
+    line-height: 70px !important;
+    font-size: 18px !important;
+    font-weight: 400 !important;
+}
+
 #mobile-logo {
     width: 40%;
     position: relative;

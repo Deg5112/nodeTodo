@@ -49,7 +49,7 @@ var User = module.exports = mongoose.model('User', UserSchema);
 // this method passes in a user object, encyrpts the password, then stores the user in db, the callback passed in,
 //gets called after we save
 module.exports.createUser = function(newUser, callback){
-    console.log('model new user before save', newUser);
+    // console.log('model new user before save', newUser);
     bcrypt.genSalt(10, function(err, salt) {
         bcrypt.hash(newUser.local.password, salt, function(err, hash) {
             // Store hash in your password DB.
@@ -78,6 +78,16 @@ module.exports.getUserByUsername = function(username, callback){
         local:{ $exists: true },
         "local.username": username
     };
+    User.find(query, callback);
+};
+
+module.exports.checkDuplicatedRegistration = function(username, email, callback){
+
+    var query = {
+        local:{ $exists: true },
+        $or:[{"local.username": username},{'email': email}]
+    };
+
     User.find(query, callback);
 };
 

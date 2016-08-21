@@ -15,8 +15,6 @@ var domain = 'davidgoodman.club';
 var mailgun = require('mailgun-js')({apiKey: api_key, domain: domain});
 var os = require("os");
 var hostname = os.hostname();
-console.log('HOSTNAME', hostname);
-
 
 var Cryptr = require('cryptr');
 var cryptr = new Cryptr('myTotalySecretKey');
@@ -115,6 +113,7 @@ router.get('/verify/:encryptedEmail', function(req, res){
 
 //POST
 router.post('/register', function(req, res){
+    
     var name = req.body.name;
     var email = req.body.email;
     var username = req.body.username;
@@ -156,6 +155,7 @@ router.post('/register', function(req, res){
                 msg:null
             }
         };
+        
         var length = errors.length;
         for(var x = 0; x<length; x++){
             
@@ -183,82 +183,93 @@ router.post('/register', function(req, res){
                 finalErrors.password2.bool = true;
                 finalErrors.password2.msg = errors[x].msg;
             }
-            
         }
-        
-        console.log(finalErrors);
         res.render('register', {errors: finalErrors, prevEntries: req.body} );
     }else{
-        //if no errors, we'll make a new user object with the schema of user created in model
-
-        var encryptedEmailString = cryptr.encrypt(email);
-        
-        var newUser = new User({
-            local:{
-                name: name,
-                email: email,
-                username: username,
-                password: password,
-                active: 0,
-                encryptedEmail:encryptedEmailString
-            }
-        });
-
-        //email varification TODO
-        if(hostname == 'node'){
-            var verificationHref = 'http://davidgoodman-node.club/users/verify/'+encryptedEmailString;
-        }else{
-            var verificationHref = 'http://localhost:3000/users/verify/'+encryptedEmailString;
-        }
-
-        var html =
-            '<div style="margin:1% 3%;font-family: sans-serif;">'
-           +    '<div>'
-           +       '<div id="div1" style="display: inline-block; width: 49%;">'
-           +           '<h1 id="span"><img style="width:51px;vertical-align: middle;margin: 0 3% 0 0;" src="https://s3-us-west-2.amazonaws.com/slack-files2/avatars/2015-12-26/17403075280_024490441c688e6ab5f8_512.png">TODO</h1>'
-           +       '</div>'
-           +       '<div id="div2" style="display: inline-block; width: 49%;">'
-           +           '<span style="float:right;font-size: 21px;font-weight: bold;">Welcome, David</span>'
-           +       '</div>'
-           +   '</div>'
-           +   '<br>'
-           +   '<div style="border-bottom: 1px solid #e2e2e2; margin:2% 0;"></div>'
-           +   '<div>'
-           +       '<h3 style="text-decoration: underline">Welcome, David Goodman</h3>'
-           +   '</div>'
-           +   '<div>'
-           +       '<p style="font-size: 16px;">Thank you for signing up for todo. Please click the link below to activate your account</p>'
-           +   '</div>'
-           +   '<div id="linkrow" style="margin: 6% 0;">'
-           +       '<a id="activate" href=' + verificationHref + 'style="background-color:#ee6e73;padding: .7em;border-radius: 5px;color: white;text-decoration: none;">Activate Your Account!</a>'
-           +    '</div>'
-           + '</div>';
-        
-        var data = {
-            from: 'Todo APP <noreply@dgoody.mailgun.org>',
-            to: 'deg5112@gmail.com',
-            subject: 'Hello From Todo',
-            html: html
-        };
-
-        mailgun.messages().send(data, function (error, body) {
-            console.log(body);
-            console.log('sent!');
-        }); 
-
-       
-        //send email above with activation link, then create user with encrypted password that expires
-        User.createUser(newUser, function(err, user){
+        //find my email
+        User.checkDuplicatedRegistration(username, email, function(err, userArray){
             if(err){
-                //if there's an error it'll throw an error and stop the script
-                console.log('error');
-                throw err;
+                req.flash('error', 'Registration Error, please contact site support');
+                res.redirect('/users/register');
             }
-            //if no error it'll just console log the user
-            console.log(user, 'user entered in db');
+            if(userArray.length>0){
+                //email or username already taken
+                req.flash('error', 'User with the same username or password already exists');
+                res.redirect('/users/register');
+            }else{
+                //do everything else
+                //if no errors, we'll make a new user object with the schema of user created in model
+
+                var encryptedEmailString = cryptr.encrypt(email);
+
+                var newUser = new User({
+                    local:{
+                        name: name,
+                        email: email,
+                        username: username,
+                        password: password,
+                        active: 0,
+                        encryptedEmail:encryptedEmailString
+                    }
+                });
+
+                //email varification TODO
+                if(hostname == 'node'){
+                    var verificationHref = 'http://davidgoodman-node.club/users/verify/'+encryptedEmailString;
+                }else{
+                    var verificationHref = 'http://localhost:3000/users/verify/'+encryptedEmailString;
+                }
+
+                var html =
+                    '<div style="margin:1% 3%;font-family: sans-serif;">'
+                    +    '<div>'
+                    +       '<div id="div1" style="display: inline-block; width: 49%;">'
+                    +           '<h1 id="span"><img style="width:51px;vertical-align: middle;margin: 0 3% 0 0;" src="https://s3-us-west-2.amazonaws.com/slack-files2/avatars/2015-12-26/17403075280_024490441c688e6ab5f8_512.png">TODO</h1>'
+                    +       '</div>'
+                    +       '<div id="div2" style="display: inline-block; width: 49%;">'
+                    +           '<span style="float:right;font-size: 21px;font-weight: bold;">Welcome, '+name+'</span>'
+                    +       '</div>'
+                    +   '</div>'
+                    +   '<br>'
+                    +   '<div style="border-bottom: 1px solid #e2e2e2; margin:2% 0;"></div>'
+                    +   '<div>'
+                    +       '<h3 style="text-decoration: underline">Welcome, '+name+'</h3>'
+                    +   '</div>'
+                    +   '<div>'
+                    +       '<p style="font-size: 16px;">Thank you for signing up for todo. Please click the link below to activate your account</p>'
+                    +   '</div>'
+                    +   '<div id="linkrow" style="margin: 6% 0;">'
+                    +       '<a id="activate" style="background-color:#ee6e73;padding: .7em;border-radius: 5px;color: white;text-decoration: none;" href=' + verificationHref + ' >Activate Your Account!</a>'
+                    +    '</div>'
+                    + '</div>';
+
+                var data = {
+                    from: 'Todo <noreply@dgoody.mailgun.org>',
+                    to: email,
+                    subject: 'Thank you for signing up',
+                    html: html
+                };
+
+                mailgun.messages().send(data, function (error, body) {
+                    console.log(body);
+                    console.log('sent!');
+                });
+
+
+                //send email above with activation link, then create user with encrypted password that expires
+                User.createUser(newUser, function(err, user){
+                    if(err){
+                        //if there's an error it'll throw an error and stop the script
+                        console.log('error');
+                        throw err;
+                    }
+                    //if no error it'll just console log the user
+                    console.log(user, 'user entered in db');
+                });
+                req.flash('success_msg', 'Registration successful, please check your email for An activation link');
+                res.redirect('/users/login');
+            }
         });
-        req.flash('success_msg', 'Registration successful, please check your email for An activation link');
-        res.redirect('/users/login');
     }
 });
 

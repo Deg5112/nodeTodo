@@ -205,7 +205,12 @@ router.post('/register', function(req, res){
         });
 
         //email varification TODO
-        var verificationHref = 'http://davidgoodman-node.club/users/verify/'+encryptedEmailString;
+        if(hostname == 'node'){
+            var verificationHref = 'http://davidgoodman-node.club/users/verify/'+encryptedEmailString;
+        }else{
+            var verificationHref = 'http://localhost:3000/users/verify/'+encryptedEmailString;
+        }
+
         var html =
             '<div style="margin:1% 3%;font-family: sans-serif;">'
            +    '<div>'
@@ -228,14 +233,6 @@ router.post('/register', function(req, res){
            +       '<a id="activate" href=' + verificationHref + 'style="background-color:#ee6e73;padding: .7em;border-radius: 5px;color: white;text-decoration: none;">Activate Your Account!</a>'
            +    '</div>'
            + '</div>';
-
-
-
-            
-
-            // "<div style='text-align: center;background-color:#ee6e73'></div>"
-            // +"<h1>Thank you for registering to Todo</h1>"
-            // +"<a href="+verificationHref+" style='position: absolute; left: 50%; transform: translateX(-50%);'>Please click here to verify your account</a>";
         
         var data = {
             from: 'Todo APP <noreply@dgoody.mailgun.org>',
@@ -275,7 +272,6 @@ router.get('/logout', function(req,res,next){
     req.flash('success_msg', 'You are logged out');
     res.redirect('/users/login');
 });
-
 
 //Facebook login
 // Redirect the user to Facebook for authentication.  When complete,
@@ -317,14 +313,11 @@ passport.use(new FacebookStrategy({
                         }
                         return done(null, newUser);
                     }); //they have no password so save as is
-
                 }
-
             });
         });
     }
 ));
-
 
 router.get('/auth/facebook', passport.authenticate('facebook', {scope: ['email']}));
 

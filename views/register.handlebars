@@ -6,78 +6,68 @@
     </div>
     <form method="post" action="/users/register">
         <div class="row">
-            <div class="col s12 m10 offset-m1 l6 offset-l3">
-                <div class="input-field">
-                    <input id="name" type="text" class="validate"  name="name"
+            <div class="input-field col s12 m10 offset-m1 l6 offset-l3">
+                <input id="name" type="text" class="validate"  name="name"
                 {{#if prevEntries}}
                            value="{{prevEntries.name}}"
                 {{/if}}
-                    >
-                    <label for="name" >Name</label>
-                    {{#if errors.name.bool}}
-                        <span class="red-text text-accent-3">{{errors.name.msg}}</span>
-                    {{/if}}
-                </div>
+                >
+                <label for="name" >Name</label>
+                {{#if errors.name.bool}}
+                    <span class="red-text text-accent-3">{{errors.name.msg}}</span>
+                {{/if}}
             </div>
         </div>
         <div class="row">
-            <div class="col s12 m10 offset-m1 l6 offset-l3">
-                <div class="input-field">
-                    <input id="username" type="text" class="validate"  name="username"
+            <div class="input-field col s12 m10 offset-m1 l6 offset-l3">
+                <input id="username" type="text" class="validate"  name="username"
+                {{#if prevEntries}}
+                   value="{{prevEntries.username}}"
+                {{/if}}
+                >
+                <label for="username">Username</label>
+                {{#if errors.username.bool}}
+                    <span class="red-text text-accent-3">{{errors.username.msg}}</span>
+                {{/if}}
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col s12 m10 offset-m1 l6 offset-l3">
+                <input id="email" type="email" class="validate"  name="email"
+                {{#if prevEntries}}
+                   value="{{prevEntries.email}}"
+                {{/if}}
+                >
+                <label for="email" >Email</label>
+                {{#if errors.email.bool}}
+                    <span class="red-text text-accent-3">{{errors.email.msg}}</span>
+                {{/if}}
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col s12 m10 offset-m1 l6 offset-l3">
+                <input id="password"  type="password" class="validate" name="password"
+                {{#if prevEntries}}
+                       value="{{prevEntries.password}}"
+                {{/if}}
+                >
+                <label for="password">Password</label>
+                {{#if errors.password.bool}}
+                    <span class="red-text text-accent-3">{{errors.password.msg}}</span>
+                {{/if}}
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col s12 m10 offset-m1 l6 offset-l3">
+                <input id="confirm-password" type="password" class="validate" name="password2"
                     {{#if prevEntries}}
-                       value="{{prevEntries.username}}"
+                       value="{{prevEntries.password2}}"
                     {{/if}}
-                    >
-                    <label for="username">Username</label>
-                    {{#if errors.username.bool}}
-                        <span class="red-text text-accent-3">{{errors.username.msg}}</span>
-                    {{/if}}
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col s12 m10 offset-m1 l6 offset-l3">
-                <div class="input-field">
-                    <input id="email" type="email" class="validate"  name="email"
-                    {{#if prevEntries}}
-                       value="{{prevEntries.email}}"
-                    {{/if}}
-                    >
-                    <label for="email" >Email</label>
-                    {{#if errors.email.bool}}
-                        <span class="red-text text-accent-3">{{errors.email.msg}}</span>
-                    {{/if}}
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col s12 m10 offset-m1 l6 offset-l3">
-                 <div class="input-field">
-                    <input id="password"  type="password" class="validate" name="password"
-                    {{#if prevEntries}}
-                           value="{{prevEntries.password}}"
-                    {{/if}}
-                    >
-                    <label for="password">Password</label>
-                    {{#if errors.password.bool}}
-                        <span class="red-text text-accent-3">{{errors.password.msg}}</span>
-                    {{/if}}
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col s12 m10 offset-m1 l6 offset-l3">
-                <div class="input-field">
-                    <input id="confirm-password" type="password" class="validate" name="password2"
-                        {{#if prevEntries}}
-                           value="{{prevEntries.password2}}"
-                        {{/if}}
-                    >
-                    <label for="confirm-password">Confirm Password</label>
-                    {{#if errors.password2.bool}}
-                        <span class="red-text text-accent-3">{{errors.password2.msg}}</span>
-                    {{/if}}
-                </div>
+                >
+                <label for="confirm-password">Confirm Password</label>
+                {{#if errors.password2.bool}}
+                    <span class="red-text text-accent-3">{{errors.password2.msg}}</span>
+                {{/if}}
             </div>
         </div>
         <div class="row">

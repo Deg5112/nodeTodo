@@ -202,7 +202,7 @@ router.post('/register', function(req, res){
         });
 
         //email varification TODO
-        var verificationHref = 'http://localhost:3000/users/verify/'+encryptedEmailString;
+        var verificationHref = 'http://davidgoodman-node.club/users/verify/'+encryptedEmailString;
         var html =
             "<div style='text-align: center;background-color:#ee6e73'></div>"
             +"<h1>Thank you for registering to Todo</h1>"

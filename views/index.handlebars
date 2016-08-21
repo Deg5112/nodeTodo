@@ -5,14 +5,10 @@
         </div>
     </div>
     <div class="row">
-        <div class="col col s12 m10 offset-m1 l8 offset-l2">
-            <div class="input-field">
-                <input id="add-item-input" type="text" class="validate" name="task_title" ng-model="lC.listItem.listTitle">
-                <label for="add-item-input">Enter New List Item</label>
-
-                <button class="btn waves-effect waves-light col s12" type="button" ng-click="lC.createList('{{user._id}}')">Create</button>
-
-            </div>
+        <div class="input-field col s12 m10 offset-m1 l8 offset-l2">
+            <input id="add-item-input" type="text" class="validate" name="task_title" ng-model="lC.listItem.listTitle">
+            <label for="add-item-input">Enter New List Item</label>
+            <button class="btn waves-effect waves-light col s12" type="button" ng-click="lC.createList('{{user._id}}')">Create</button>
         </div>
     </div>
 

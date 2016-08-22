@@ -6,10 +6,11 @@ var LocalStrategy = require('passport-local').Strategy;
 var FacebookStrategy = require('passport-facebook').Strategy;
 //include user model
 var User = require('../models/user.js');
-var configAuth = require('../config/auth');
+
 var mongoose = require('mongoose');// require mongoose
 // var sendgrid  = require('sendgrid')(configAuth.sendGrid.user, configAuth.sendGrid.user); //takes api key as parameter
 // console.log(sendgrid);
+var configAuth = require('../config/auth');
 var api_key = configAuth.mailgun.key; 
 var domain = 'davidgoodman.club';
 var mailgun = require('mailgun-js')({apiKey: api_key, domain: domain});

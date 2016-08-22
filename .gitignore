@@ -1,3 +1,5 @@
 /config
 auth.js
 gmailAuth.js
+app.js
+auth.js

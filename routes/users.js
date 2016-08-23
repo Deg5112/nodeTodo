@@ -352,7 +352,7 @@ router.post('/resetPassword', function(req, res) {
             hashString = hash;  //set new user = hash
             hashString = hashString.replace('/', '');
             console.log('hash after cript',hashString);
-            var url = 'http://localhost:3000/users/passwordReset/'+hashString;
+            var url = 'http://davidgoodman-node.club/users/passwordReset/'+hashString;
             //create token, store token on user prop
 
             //update hash string on user
@@ -404,30 +404,65 @@ router.get('/passwordReset/:hash', function(req, res) {
     console.log(req.params.hash);
 
     //find user with resethash that's the same
-    User.findUserByResetHash(req.params.hash, function(){
+    User.findUserByResetHash(req.params.hash, function(err, user){
         if(err) throw err; //if error
 
         if(!user || user.length == 0){  //if no user
             //else render back to login, reset link not active
             req.flash('error', 'Activation link not active');
             res.redirect('/users/register');
+        }else{
+            console.log('user ',user[0]._id);
+            var id = user[0]._id
+            req.flash('success_msg', 'Please reset your password');
+            res.render('password-reset', {userId: id});   
         }
-
-        console.log('user ',user);
-        return;
-
-        req.flash('success_msg', 'Please reset your password');
-        res.render('password-reset', {});
     });
 
     //if hash is same render to reset view
-
-
-
-
-
-    
 });
+
+router.post('/resetPasswordSuccess/:userId', function(req, res) {
+    var userId = req.params.userId;
+    var password = req.body.password;
+    var password2 = req.body.password2;
+    console.log(password, password2);
+    console.log(req.body);
+ 
+    if(password !== password2){
+        console.log('true');
+        req.flash('error', 'Passwords do not match');
+        res.render('password-reset', {userId: userId});
+      
+    }else{
+        //passwords match
+        //update password
+        User.updatePassword(password, userId, function(err, mongoResponse){
+            if(err){
+                throw err;
+            }
+            if(mongoResponse){
+                if(mongoResponse.nModified == 1 && mongoResponse.n == 1){
+                    req.flash('success_msg', 'Your password has been reset, please log in');
+                    res.redirect('/users/login');
+                }
+                if(mongoResponse.nModified == 0 && mongoResponse.n == 1){
+                    req.flash('success_msg', 'Your password has been reset, please log in');
+                    res.redirect('/users/login');
+                }
+                if(mongoResponse.nModified == 0 && mongoResponse.n == 0){
+                    console.log('update failed');
+                    //it expired.. have a resend activation link page.. they enter their email, and send to a new route
+                    // that encrypts password and sends them a link, back to this route
+                    req.flash('error', 'Please contact site admin');
+                    res.redirect('/users/login');
+                }
+            }
+        })
+    }
+});
+
+
 
 
 

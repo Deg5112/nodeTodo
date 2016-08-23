@@ -1,7 +1,7 @@
 //MODELS!!
 var mongoose = require('mongoose');// require mongoose
 var bcrypt = require('bcryptjs');  //required bcrypt right herrrrr
-
+var ObjectId = require('mongodb').ObjectID;
 //User Schema
 
 var UserSchema = mongoose.Schema({   //define data collection schema
@@ -88,8 +88,27 @@ module.exports.updateResetHash = function(email,resetHash, callback){
         }, callback);
 };
 
+module.exports.updatePassword = function(password, id, callback){
+    bcrypt.genSalt(10, function(err, salt) {
+        bcrypt.hash(password, salt, function(err, hash) {
+            // Store hash in your password DB.
+            User.update({
+                    local:{$exists: true},
+                    _id: ObjectId(id)
+                },
+                {
+                    $set:{
+                        "local.password": hash, 
+                        'local.resetHash': null
+                    }
+                }, callback);
+        });
+    });
+};
+
+
 module.exports.findUserByResetHash = function(hash, callback){
-    console.log('username', username);
+    console.log('username', hash);
     var query = {
         local:{ $exists: true },
         "local.resetHash": hash
@@ -105,6 +124,8 @@ module.exports.getUserByUsername = function(username, callback){
     };
     User.find(query, callback);
 };
+
+
 
 module.exports.checkDuplicatedRegistration = function(username, email, callback){
 

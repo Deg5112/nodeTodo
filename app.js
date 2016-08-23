@@ -11,7 +11,7 @@ var passport = require('passport');
 var localStrategy = require('mongoose');
 var mongo = require('mongodb');
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/loginapp');
+mongoose.connect('mongodb://localhost/todo');
 var db = mongoose.connection;
 //init app
 var app = express();

@@ -24,12 +24,13 @@ app.controller('signInController', function($http, $log, navClass){
     self.resetPassword = function(email){
         if(typeof email == 'undefined'){
             self.emailResetBool = true;
+            return;
         }else{
             self.emailResetBool = false;
         }
-        $log.info(email);
         
-        $http.post('http://localhost:3000/users/resetPassword', {email: email})
+        
+        $http.post('http://davidgoodman-node.club/users/resetPassword', {email: email})
             .then(function(response){
                 console.log(response);
                if(response.data.success){

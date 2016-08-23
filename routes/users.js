@@ -268,7 +268,7 @@ router.post('/register', function(req, res){
                     //if no error it'll just console log the user
                     console.log(user, 'user entered in db');
                 });
-                req.flash('success_msg', 'Registration successful, please check your email for An activation link');
+                req.flash('success_msg', 'Registration successful, please check your email for an activation link');
                 res.redirect('/users/login');
             }
         });

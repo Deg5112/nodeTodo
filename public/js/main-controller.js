@@ -1,9 +1,8 @@
 app.controller('mainController', function($scope, $http, $log, navClass){
     var self = this;
-    self.passwordResetEmail = null;
+    
 
     self.returnNavClass = function(string){
-        console.log('navClass from main', navClass.class);
         return navClass.class == string;
     };
     
@@ -11,10 +10,7 @@ app.controller('mainController', function($scope, $http, $log, navClass){
         console.log('open');
         $('#modal1').openModal();
     };
-
-    self.resetPassword = function(email){
-        $http.post('localhost:3000/users/resetPassword', {email: email})
-    };
+    
 
     self.checkMessage = function(){
 

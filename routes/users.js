@@ -16,6 +16,7 @@ var domain = 'davidgoodman.club';
 var mailgun = require('mailgun-js')({apiKey: api_key, domain: domain});
 var os = require("os");
 var hostname = os.hostname();
+var bcrypt = require('bcryptjs');  //required bcrypt right herrrrr
 
 var Cryptr = require('cryptr');
 var cryptr = new Cryptr('myTotalySecretKey');
@@ -338,6 +339,97 @@ router.get('/auth/facebook', passport.authenticate('facebook', {scope: ['email']
 router.get('/auth/facebook/callback',
     passport.authenticate('facebook', { successRedirect: '/',
         failureRedirect: '/users/login' }));
+
+
+//reset password
+router.post('/resetPassword', function(req, res) {
+    var email = req.body.email;
+    var encryptedEmailString = cryptr.encrypt(email);
+    var hashString = null;
+    bcrypt.genSalt(10, function(err, salt) {
+        bcrypt.hash(email, salt, function(err, hash) {
+            // Store hash in your password DB.
+            hashString = hash;  //set new user = hash
+            hashString = hashString.replace('/', '');
+            console.log('hash after cript',hashString);
+            var url = 'http://localhost:3000/users/passwordReset/'+hashString;
+            //create token, store token on user prop
+
+            //update hash string on user
+            User.updateResetHash(email, hashString, function(err,mongoResponse){
+                if(mongoResponse){
+                    res.setHeader('Content-Type', 'application/json');
+                    console.log(mongoResponse);
+                 
+                    if(mongoResponse.nModified == 1 && mongoResponse.n == 1){
+                        
+                        var data = {
+                            from: 'Todo <noreply@dgoody.mailgun.org>',
+                            to: email,
+                            subject: 'Email Reset',
+                            html:
+                            '<p>Click this link to reset your password</p>'
+                            +'<br>'
+                            +'<a href='+ url +'>Reset Password</a>'
+                        };
+
+                        mailgun.messages().send(data, function (error, body) {
+                            console.log(body);
+                            console.log('sent!');
+                        });
+                        
+                        res.send(JSON.stringify({ success: true}));
+                    }
+
+                    if(mongoResponse.nModified == 0 && mongoResponse.n == 1){
+
+                    }
+
+                    if(mongoResponse.nModified == 0 && mongoResponse.n == 0){
+                        console.log('update failed');
+                        //it expired.. have a resend activation link page.. they enter their email, and send to a new route
+                        // that encrypts password and sends them a link, back to this route
+                        res.send(JSON.stringify({ success: false}));
+                    }
+                }
+            });
+            
+        });
+    });
+
+});
+
+router.get('/passwordReset/:hash', function(req, res) {
+    console.log('hello');
+    console.log(req.params.hash);
+
+    //find user with resethash that's the same
+    User.findUserByResetHash(req.params.hash, function(){
+        if(err) throw err; //if error
+
+        if(!user || user.length == 0){  //if no user
+            //else render back to login, reset link not active
+            req.flash('error', 'Activation link not active');
+            res.redirect('/users/register');
+        }
+
+        console.log('user ',user);
+        return;
+
+        req.flash('success_msg', 'Please reset your password');
+        res.render('password-reset', {});
+    });
+
+    //if hash is same render to reset view
+
+
+
+
+
+    
+});
+
+
 
 
 module.exports = router;

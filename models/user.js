@@ -22,6 +22,9 @@ var UserSchema = mongoose.Schema({   //define data collection schema
         name: {
             type: String
         },
+        resetHash: {
+            type: String
+        },
         active:{
             type: Boolean
         },
@@ -70,6 +73,28 @@ module.exports.verifyUser = function(encryptedEmail, callback){
                 "local.active": true
             }
         }, callback);
+};
+
+module.exports.updateResetHash = function(email,resetHash, callback){
+    console.log('model takes', email, resetHash);
+    User.update({
+            local:{$exists: true},
+            "local.email":email
+        },
+        {
+            $set:{
+                "local.resetHash": resetHash
+            }
+        }, callback);
+};
+
+module.exports.findUserByResetHash = function(hash, callback){
+    console.log('username', username);
+    var query = {
+        local:{ $exists: true },
+        "local.resetHash": hash
+    };
+    User.find(query, callback);
 };
 
 module.exports.getUserByUsername = function(username, callback){

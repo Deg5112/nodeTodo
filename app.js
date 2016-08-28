@@ -119,14 +119,22 @@ server.listen(app.get('port'), function(){
 io.sockets.on('connection', function(socket){
     
     socket.on('createListItem', function(data){
+        console.log('data ',data);
+        
         var listItem = new List({
-            user_id: data.userId,
+            // user_ids: [{text: data.userId}],
             listTitle: data.listItem.listTitle,
             active: true
         });
+        listItem.user_ids.push(data.userId);
         
         listItem.save(function(err, object){
+            if(err) throw err;
+            
+            console.log(object);
+            
             data.listItem._id = object._id;
+            data.listItem.user_ids = object.user_ids;
             console.log(data);  
             io.sockets.emit('listCreationSuccess', data); //ideally you'll want to emit this to only to the room the socket is in for that list
         });

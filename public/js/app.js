@@ -30,7 +30,7 @@ app.controller('signInController', function($http, $log, navClass){
         }
         
         
-        $http.post('http://davidgoodman-node.club/users/resetPassword', {email: email})
+        $http.post('/users/resetPassword', {email: email})
             .then(function(response){
                 console.log(response);
                if(response.data.success){

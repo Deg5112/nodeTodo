@@ -18,17 +18,52 @@
             <ul class="collection">
                 <div class="list-item" style="position:relative;" ng-repeat="item in lC.list">
                     <a  class="collection-item avatar" href="/todo-items/\{{item._id}}/\{{item.listTitle}}"  ng-click="lC.getTodos()">
-                        <i class="material-icons circle">view_list</i>
+                        <i class="material-icons circle" ng-show="item.user_ids.length == 1">view_list</i>
+                        <i class="material-icons circle" ng-show="item.user_ids.length > 1">group</i>
                         <span class="">
                             <h5>
                             \{{item.listTitle}}
                             </h5>
                         </span>
                     </a>
-                    <a href="/updateList/\{{item._id}}" class="list-update"><i class="material-icons">edit</i></a>
+                    <a class='' href='#list-share' modal ng-click="lC.shareIndex = $index;"><i class="material-icons list-share">screen_share</i></a>
+                    <a ng-href="/updateList/\{{item._id}}" class="list-update"><i class="material-icons">edit</i></a>
                     <i ng-click="lC.deleteList(item._id, $index)"  class="material-icons list-delete">delete</i>
                 </div>
             </ul>
         </div>
     </div>
+
+    <!-- Modal Structure -->
+    <div id="list-share" class="modal">
+        <div class="modal-content">
+            <div class="row">
+                <div class="col s12 m10 offset-m1 l6 offset-l3">
+                    <h4>Share list with a friend</h4>
+                    <p>Please enter your friend's email</p>
+                </div>
+                <div class="row">
+                    <div class="input-field col  s12 m10 offset-m1 l6 offset-l3">
+                        <input id="email-reset" type="email" name="email_reset" class="validate" ng-model="lC.emailToShare">
+                        <label for="email-reset">Email</label>
+                        <p class="red-text accent-3" ng-show="lC.emailResetBool">Please enter a valid email address</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col s12 m10 offset-m1 l6 offset-l3">
+                        <button type="submit" class="waves-effect waves-light btn col s12 blue lighten-2" ng-click="lC.listShare(lC.emailToShare, lC.shareIndex)">Share List</button>
+                        <br>
+                        <p class="red-text" ng-show="lC.emailValidError">\{{lC.inviteMessage}}</p>
+                        <p class="green-text" ng-show="lC.emailShareSuccess">\{{lC.inviteMessage}} \{{lC.emailToShare}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Close</a>
+        </div>
+    </div>
+
 </div>
+
+

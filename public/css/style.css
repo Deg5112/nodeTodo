@@ -27,12 +27,78 @@ button{
 .list-item{
 
 }
+.material-icons{
+    cursor:pointer;
+    padding:6px;
+    border-radius: 5px;
+}
+.material-icons.circle{
+    padding:0;
+}
+.material-icons.list-share {
+    position: absolute;
+    right: 18%;
+    color: rgba(0, 0, 0, 0.45);
+}
+
+.material-icons:hover {
+    background-color: rgba(238, 110, 115, 0.35);
+
+}
+@media screen and (max-width: 482px){
+    .material-icons.list-share {
+        right: 19%;
+    }
+    .list-update {
+        right: 10%;
+    }
+}
+@media screen and (min-width: 429px){
+    .list-update {
+        right: 9%;
+    }
+}
+
+@media screen and (max-width: 429px){
+    .material-icons.list-share {
+        right: 24%;
+    }
+    .list-update {
+        right: 12%;
+    }
+}
+
 li.task-item {
     border: 1px solid black;
     border-radius: 5px;
     background-color: #798efe;
 }
 
+span#back-link {
+    position: relative;
+    bottom: .9em;
+    right: .5em;
+}
+
+#todo-header-row{
+    margin-bottom: 0;
+}
+
+div#back-row {
+    margin: 0;
+}
+
+div#back-row i{
+    padding-left: 0;
+}
+div#back-row a{
+    position: relative;
+    right: .7em;
+}
+
+div#back-row i:hover{
+    background-color: transparent;
+}
 
 i.material-icons.list-delete {
     color: #ee6e73;
@@ -40,11 +106,20 @@ i.material-icons.list-delete {
 i.material-icons {
     font-size: 2.5em;
 }
+.material-icons.circle{
+    display: none;
+}
 
 .list-update {
     position: absolute;
     top: 20%;
-    right: 9%;
+}
+
+.list-share{
+    position: absolute;
+    top:22%;
+    right: 10%;
+
 }
 
 

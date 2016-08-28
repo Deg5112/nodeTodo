@@ -7,6 +7,34 @@ app.controller('listController', function($scope, $http, $location){
     self.listItem = {
         listTitle: null
     };
+    self.shareIndex = null;
+    self.emailValidError = false;
+    self.emailShareSuccess = false;
+    self.emailToShare = null;
+    self.inviteMessage = null;
+    self.showSharedImage = false;
+
+    self.listShare = function(email, index){
+        console.log(self.list[index]._id);
+        console.log(self.list);
+        console.log(email);
+        $http.post('/list-share', {email: email, listId:self.list[index]._id})
+            .then(function(response){
+                console.log(response);
+                if(response.data.success){
+                    self.inviteMessage = response.data.message;
+
+                    self.emailShareSuccess = true;
+                    self.emailValidError = false;
+                }else{
+                    //email not valid
+                    self.inviteMessage = response.data.message;
+                    
+                    self.emailValidError = true;
+                    self.emailShareSuccess = false;
+                }
+            });
+    };
 
     self.getUserId = function(){
         $http.get('/userId').then(function(response){
@@ -43,6 +71,8 @@ app.controller('listController', function($scope, $http, $location){
 
     socket.on('getListResponse', function(data){
         var data = JSON.parse(data);
+        console.log('lists', data);
+        
         self.list = data;
         $scope.$digest();
     });

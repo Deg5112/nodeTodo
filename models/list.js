@@ -6,10 +6,9 @@ var ObjectId = require('mongodb').ObjectID;
 //User Schema
 
 var ListSchema = mongoose.Schema({   //define data collection schema
-    user_id: {
-        type: String,
-        index:true
-    },
+    user_ids: [
+        {type:String}
+    ],
     listTitle: {
         type: String,
         index:true
@@ -31,10 +30,12 @@ var List = module.exports = mongoose.model('List', ListSchema);
 
 //get all list for user
 module.exports.getList = function(UserId, callback){
+
     List.find({
-        user_id: UserId,
+        user_ids:{$in:[UserId]},
         active: 1
     }, callback);
+
 };
 
 module.exports.getListItem = function(listId, callback){
@@ -53,14 +54,22 @@ module.exports.updateList = function(listId, title, callback){
   }, callback);
 };
 
-module.exports.createList= function(UserId, taskTitle, taskNotes){
-
+module.exports.addUserToList = function(listId, userId, callback){
+    console.log('listId ',listId);
+    console.log('userId ',userId);
+    
+    List.update({
+            _id: ObjectId(listId)
+        },
+        {
+            $push: {"user_ids": userId}
+        },
+        {
+            safe: true, upsert: true, new : true
+        }, callback)
 };
 
-//edit task
-module.exports.editList = function(UserId, taskTitle, taskNotes){
 
-};
 
 //delete task  //might want to soft delete in case you want to look at recently deleted
 module.exports.deleteList = function(list, callback){

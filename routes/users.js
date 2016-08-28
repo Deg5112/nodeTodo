@@ -19,7 +19,7 @@ var hostname = os.hostname();
 var bcrypt = require('bcryptjs');  //required bcrypt right herrrrr
 
 var Cryptr = require('cryptr');
-var cryptr = new Cryptr('myTotalySecretKey');
+var cryptr = new Cryptr(configAuth.cryptr.key);
 //this authenticated creds passed in, to creds from the db
 //this is the middleware that we pass into, this is the local strategy
 function capitalizeFirstLetter(string) {

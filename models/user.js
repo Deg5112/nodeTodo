@@ -125,6 +125,14 @@ module.exports.getUserByUsername = function(username, callback){
     User.find(query, callback);
 };
 
+module.exports.getUserByEmail = function(email, callback){
+    console.log('username', email);
+    var query = {
+        local:{ $exists: true },
+        "local.email": email
+    };
+    User.find(query, callback);
+};
 
 
 module.exports.checkDuplicatedRegistration = function(username, email, callback){

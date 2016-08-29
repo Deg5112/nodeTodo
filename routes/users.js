@@ -6,7 +6,7 @@ var LocalStrategy = require('passport-local').Strategy;
 var FacebookStrategy = require('passport-facebook').Strategy;
 //include user model
 var User = require('../models/user.js');
-
+var List = require('../models/list');
 var mongoose = require('mongoose');// require mongoose
 // var sendgrid  = require('sendgrid')(configAuth.sendGrid.user, configAuth.sendGrid.user); //takes api key as parameter
 // console.log(sendgrid);
@@ -34,7 +34,7 @@ passport.use(new LocalStrategy(function(username, password, done) {
         if(!user || user.length == 0){  //if no user
             return done(null, false, {message:'Unknown User'});
         }
-        
+
         User.comparePassword(password, user[0].local.password, function(err, isMatch){ //if there's a username, we'll have another method that compares pass
             if(err) throw err;
             if(isMatch){
@@ -122,6 +122,7 @@ router.post('/register', function(req, res){
     var password = req.body.password;
     var password2 = req.body.password2;
     
+    
 //   express validation validation, so express allows us to use the methods below
     //  checkbody is a method that takes 2 arguements, name of field, and error message.. chain method after that to define rules
     req.checkBody('name', 'Name is required').notEmpty();
@@ -187,62 +188,65 @@ router.post('/register', function(req, res){
             }
         }
         res.render('register', {errors: finalErrors, prevEntries: req.body} );
-    }else{
+    }else {
         //find my email
-        User.checkDuplicatedRegistration(username, email, function(err, userArray){
-            if(err){
+        User.checkDuplicatedRegistration(username, email, function (err, userArray) {
+            if (err) {
                 req.flash('error', 'Registration Error, please contact site support');
                 res.redirect('/users/register');
             }
-            if(userArray.length>0){
+            if (userArray.length > 0) {
                 //email or username already taken
                 req.flash('error', 'User with the same username or password already exists');
                 res.redirect('/users/register');
-            }else{
+            } else {
                 //do everything else
                 //if no errors, we'll make a new user object with the schema of user created in model
 
                 var encryptedEmailString = cryptr.encrypt(email);
 
                 var newUser = new User({
-                    local:{
+                    local: {
                         name: name,
                         email: email,
                         username: username,
                         password: password,
                         active: 0,
-                        encryptedEmail:encryptedEmailString
+                        encryptedEmail: encryptedEmailString
                     }
                 });
+                //add listId here as well
+                var listId = req.body.listId;
+                console.log(req.body);
+                console.log('listId!', listId);
 
-                //email varification TODO
-                if(hostname == 'node'){
-                    var verificationHref = 'http://davidgoodman-node.club/users/verify/'+encryptedEmailString;
-                }else{
-                    var verificationHref = 'http://localhost:3000/users/verify/'+encryptedEmailString;
+                if (hostname == 'node') {
+                    var verificationHref = 'http://davidgoodman-node.club/users/verify/' + encryptedEmailString;
+                } else {
+                    var verificationHref = 'http://localhost:3000/users/verify/' + encryptedEmailString;
                 }
 
                 var html =
                     '<div style="margin:1% 3%;font-family: sans-serif;">'
-                    +    '<div>'
-                    +       '<div id="div1" style="display: inline-block; width: 49%;">'
-                    +           '<h1 id="span"><img style="width:51px;vertical-align: middle;margin: 0 3% 0 0;" src="https://s3-us-west-2.amazonaws.com/slack-files2/avatars/2015-12-26/17403075280_024490441c688e6ab5f8_512.png">TODO</h1>'
-                    +       '</div>'
-                    +       '<div id="div2" style="display: inline-block; width: 49%;">'
-                    +           '<span style="float:right;font-size: 21px;font-weight: bold;">Welcome, '+name+'</span>'
-                    +       '</div>'
-                    +   '</div>'
-                    +   '<br>'
-                    +   '<div style="border-bottom: 1px solid #e2e2e2; margin:2% 0;"></div>'
-                    +   '<div>'
-                    +       '<h3 style="text-decoration: underline">Welcome, '+name+'</h3>'
-                    +   '</div>'
-                    +   '<div>'
-                    +       '<p style="font-size: 16px;">Thank you for signing up for todo. Please click the link below to activate your account</p>'
-                    +   '</div>'
-                    +   '<div id="linkrow" style="margin: 6% 0;">'
-                    +       '<a id="activate" style="background-color:#ee6e73;padding: .7em;border-radius: 5px;color: white;text-decoration: none;" href=' + verificationHref + ' >Activate Your Account!</a>'
-                    +    '</div>'
+                    + '<div>'
+                    + '<div id="div1" style="display: inline-block; width: 49%;">'
+                    + '<h1 id="span"><img style="width:51px;vertical-align: middle;margin: 0 3% 0 0;" src="https://s3-us-west-2.amazonaws.com/slack-files2/avatars/2015-12-26/17403075280_024490441c688e6ab5f8_512.png">TODO</h1>'
+                    + '</div>'
+                    + '<div id="div2" style="display: inline-block; width: 49%;">'
+                    + '<span style="float:right;font-size: 21px;font-weight: bold;">Welcome, ' + name + '</span>'
+                    + '</div>'
+                    + '</div>'
+                    + '<br>'
+                    + '<div style="border-bottom: 1px solid #e2e2e2; margin:2% 0;"></div>'
+                    + '<div>'
+                    + '<h3 style="text-decoration: underline">Welcome, ' + name + '</h3>'
+                    + '</div>'
+                    + '<div>'
+                    + '<p style="font-size: 16px;">Thank you for signing up for todo. Please click the link below to activate your account</p>'
+                    + '</div>'
+                    + '<div id="linkrow" style="margin: 6% 0;">'
+                    + '<a id="activate" style="background-color:#ee6e73;padding: .7em;border-radius: 5px;color: white;text-decoration: none;" href=' + verificationHref + ' >Activate Your Account!</a>'
+                    + '</div>'
                     + '</div>';
 
                 var data = {
@@ -259,17 +263,35 @@ router.post('/register', function(req, res){
 
 
                 //send email above with activation link, then create user with encrypted password that expires
-                User.createUser(newUser, function(err, user){
-                    if(err){
+                User.createUser(newUser, function (err, user) {
+                    if (err) {
                         //if there's an error it'll throw an error and stop the script
                         console.log('error');
                         throw err;
                     }
                     //if no error it'll just console log the user
                     console.log(user, 'user entered in db');
+                    console.log(user);
+                    List.addUserToList(listId, user._id, function (err, mongoResponse) {
+                        if (err) throw err;
+
+                        if (mongoResponse.nModified == 1 && mongoResponse.n == 1) {
+                            req.flash('success_msg', 'Registration successful, please check your email for an activation link');
+                            res.redirect('/users/login');
+                        }
+
+                        if (mongoResponse.nModified == 0 && mongoResponse.n == 1) {
+                        }
+
+                        if (mongoResponse.nModified == 0 && mongoResponse.n == 0) {
+                            //no list found
+                            req.flash('success_msg', 'Registration successful, invited list has been removed, please check your email for an activation link');
+                            res.redirect('/users/login');
+                        }
+
+                    });
+
                 });
-                req.flash('success_msg', 'Registration successful, please check your email for an activation link');
-                res.redirect('/users/login');
             }
         });
     }
@@ -400,8 +422,6 @@ router.post('/resetPassword', function(req, res) {
 });
 
 router.get('/passwordReset/:hash', function(req, res) {
-    console.log('hello');
-    console.log(req.params.hash);
 
     //find user with resethash that's the same
     User.findUserByResetHash(req.params.hash, function(err, user){

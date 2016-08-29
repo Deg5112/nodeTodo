@@ -215,8 +215,7 @@ router.post('/register', function(req, res){
                         encryptedEmail: encryptedEmailString
                     }
                 });
-                //add listId here as well
-                var listId = req.body.listId;
+               
                 console.log(req.body);
                 console.log('listId!', listId);
 
@@ -266,31 +265,33 @@ router.post('/register', function(req, res){
                 User.createUser(newUser, function (err, user) {
                     if (err) {
                         //if there's an error it'll throw an error and stop the script
-                        console.log('error');
                         throw err;
                     }
-                    //if no error it'll just console log the user
-                    console.log(user, 'user entered in db');
-                    console.log(user);
-                    List.addUserToList(listId, user._id, function (err, mongoResponse) {
-                        if (err) throw err;
+                    //add listId here as well
+                    var listId = req.body.listId;
+                    if(listId !== 'undefined'){
+                        List.addUserToList(listId, user._id, function (err, mongoResponse) {
+                            if (err) throw err;
 
-                        if (mongoResponse.nModified == 1 && mongoResponse.n == 1) {
-                            req.flash('success_msg', 'Registration successful, please check your email for an activation link');
-                            res.redirect('/users/login');
-                        }
+                            if (mongoResponse.nModified == 1 && mongoResponse.n == 1) {
+                                req.flash('success_msg', 'Registration successful, please check your email for an activation link, list shared with new user account');
+                                res.redirect('/users/login');
+                            }
 
-                        if (mongoResponse.nModified == 0 && mongoResponse.n == 1) {
-                        }
+                            if (mongoResponse.nModified == 0 && mongoResponse.n == 1) {
+                            }
 
-                        if (mongoResponse.nModified == 0 && mongoResponse.n == 0) {
-                            //no list found
-                            req.flash('success_msg', 'Registration successful, invited list has been removed, please check your email for an activation link');
-                            res.redirect('/users/login');
-                        }
+                            if (mongoResponse.nModified == 0 && mongoResponse.n == 0) {
+                                //no list found
+                                req.flash('success_msg', 'Registration successful, invited list has been removed, please check your email for an activation link');
+                                res.redirect('/users/login');
+                            }
 
-                    });
-
+                        });    
+                    }else{
+                        req.flash('success_msg', 'Registration successful, please check your email for an activation link');
+                        res.redirect('/users/login');
+                    }
                 });
             }
         });

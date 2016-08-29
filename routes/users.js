@@ -215,9 +215,8 @@ router.post('/register', function(req, res){
                         encryptedEmail: encryptedEmailString
                     }
                 });
+                
                
-                console.log(req.body);
-                console.log('listId!', listId);
 
                 if (hostname == 'node') {
                     var verificationHref = 'http://davidgoodman-node.club/users/verify/' + encryptedEmailString;

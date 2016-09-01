@@ -11,8 +11,17 @@ var passport = require('passport');
 var localStrategy = require('mongoose');
 var mongo = require('mongodb');
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/todo');
+var configAuth = require('./config/auth');
+var options = configAuth.mongo.options;
+var os = require("os");
+var hostname = os.hostname();
+if(hostname == 'node'){
+    mongoose.connect('mongodb://localhost/todo', options);
+}else{
+    mongoose.connect('mongodb://localhost/todo');
+}
 var db = mongoose.connection;
+console.log('db', db);
 //init app
 var app = express();
 var server = require('http').createServer(app);

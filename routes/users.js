@@ -268,7 +268,8 @@ router.post('/register', function(req, res){
                     }
                     //add listId here as well
                     var listId = req.body.listId;
-                    if(listId !== 'undefined'){
+                    console.log(req.body);
+                    if(listId !== 'undefined' && listId !== ''){
                         List.addUserToList(listId, user._id, function (err, mongoResponse) {
                             if (err) throw err;
 

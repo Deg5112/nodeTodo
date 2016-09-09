@@ -62,13 +62,13 @@ module.exports.updateList = function(listId, title, callback){
 };
 
 module.exports.addUserToList = function(listId, userId, callback){
-    console.log('listId ',listId);
+    console.log('listId typeof', typeof listId);
     console.log('userId ',userId);
 
     //set it to active
 
     List.update({
-            _id: ObjectId(listId)
+            _id: ObjectId(''+listId+'')
         },
         {
             $push: {"user_ids": userId}

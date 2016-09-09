@@ -15,21 +15,16 @@ app.controller('listController', function($scope, $http, $location){
     self.showSharedImage = false;
 
     self.listShare = function(email, index){
-        console.log(self.list[index]._id);
-        console.log(self.list);
-        console.log(email);
         $http.post('/list-share', {email: email, listId:self.list[index]._id})
             .then(function(response){
                 console.log(response);
                 if(response.data.success){
                     self.inviteMessage = response.data.message;
-
                     self.emailShareSuccess = true;
                     self.emailValidError = false;
                 }else{
                     //email not valid
                     self.inviteMessage = response.data.message;
-                    
                     self.emailValidError = true;
                     self.emailShareSuccess = false;
                 }
@@ -42,6 +37,7 @@ app.controller('listController', function($scope, $http, $location){
             self.getList();
         });
     };
+    
     self.getUserId();
 
 

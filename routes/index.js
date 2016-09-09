@@ -107,6 +107,14 @@ router.post('/saveTodo/:todoId/:listId', function(req, res){
    });
 });
 
+router.get('/getChatMessages', function(req,res){
+   // List.getMessages(, function(err, messages){
+   //    if(err) throw err;
+   //    console.log(messages);
+   // });
+   // res.send(JSON.stringify());
+});
+
 //todoItem routes
 router.get('/todo-items/:listId/:listTitle', ensureAuthenticated, function(req, res){
    var listId = req.params.listId;
@@ -197,7 +205,6 @@ router.get('/list-share/:encryptedEmail/:listId', function(req,res){
             if(mongoResponse.nModified == 1 && mongoResponse.n == 1){
                //user added to list
                //get list title
-               console.log('User Added to list');
                List.getListItem(listId, function(err, listItem){
                   if(err) throw err;
                   console.log('LIST ITEM', listItem);
@@ -230,6 +237,8 @@ router.get('/list-share/:encryptedEmail/:listId', function(req,res){
 
    //if not exist, send to registration page, also pass the list id, upon registering, send activation email, with listId at the end
 });
+
+
 
 
 

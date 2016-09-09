@@ -37,36 +37,70 @@
 
         </div>
     </div>
-</div>
+    <div id="chat-box" ng-if="tC.listIsShared" data-ng-class="{zIndex: tC.chatExpandMobile}" ng-cloak>
 
-<div id="chat-box">
-    <div id="chat-content">
-        <div id="chat-head">
-            <div class="row">
-                <div class="col s10"></div>
-                <div class="col s2">
-                    <i class="material-icons" id="chat-vert-icon">more_vert</i>
+        <div id="chat-content" data-ng-class="{chatExpandMobile: tC.chatExpandMobile, chatExpandDesktop: tC.chatExpandDesktop}">
+            <div id="chat-head" data-ng-click="tC.chatExpand()">
+                <div class="row">
+                    <div class="col s2" id="message-back-col"><i class="material-icons" id="chat-message-back" ng-if="tC.chatExpandMobile || tC.chatExpandDesktop">keyboard_arrow_left</i></div>
+                    <div class="col s8 shared-name" ><span ng-if="tC.chatExpandMobile || tC.chatExpandDesktop" >\{{tC.sharedName}}</span></div>
+                    <div class="col s2">
+                        <i class="material-icons" id="chat-vert-icon">more_vert</i>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div id="chat-body">
+            <div id="chat-body" ng-if="tC.chatExpandMobile || tC.chatExpandDesktop" data-scroll-to-top='tC.messages.length' data-ng-class="{makeBodyTaller:tC.chatExpandMobile }">
+                <div class="message-container">
 
-        </div>
-        <div id="chat-bottom">
-            <div class="row">
-                <div class="col s10">
-                    <input id='chat-input' type="text"  name="" ng-nodemomodel="">
+                    <div class="chat-message" style="position: relative;" ng-repeat="i in tC.messages">
+                        <div class="row">
+                            <p id="message-date" ng-if="$index % 3 == 0">\{{i.date}}</p>
+                            <p id="message-date" ng-if="self.chatGroup && (i.userId != tC.userId) && ($index % 3 == 0)">\{{i.userName}}</p>
+                            <div ng-if="i.userId == tC.userId" class="col s7 offset-s5 mine">
+                                <p class="blue white-text">\{{i.message}}</p>
+                            </div>
+                            <div ng-if="i.userId != tC.userId"  class="col s7">
+                                <p  class="red white-text">\{{i.message}}</p>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
-                <div class="col s2">
-                    <i class="material-icons" id="send-message-chat">send</i>
+            </div>
+            <div id="chat-bottom" ng-if="tC.chatExpandMobile || tC.chatExpandDesktop" >
+                <div class="row">
+                    <div class="col s10">
+                        <input id='chat-input' type="text"  name="" ng-model="tC.messageToSend" ng-keypress="tC.checkIfEnterWasHitForChat(tC.messageToSend, $event)">
+                    </div>
+                    <div class="col s2">
+                        <i class="material-icons" id="send-message-chat" data-ng-class="{zIndex: tC.chatExpandMobile || tC.chatExpandDesktop}"
+                        ng-click="tC.sendChatMessage(tC.messageToSend, $event)">send</i>
+                        <input class="hide" type="text">
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+
+
 <script>
-    $.ajax({
-    })
-    asdf
+
+
 </script>
+
+<!--<div ng-if="i.id == 1" class="chat-message-wrap">-->
+<!--<div class="message-content blue content-mine" ng-class="{maxContentWidth:tC.chatExpandMobile}">-->
+<!--\{{i.message}}-->
+<!--<span id="arrow-right"></span>-->
+<!--</div>-->
+<!--</div>-->
+
+
+<!--<div ng-if="i.id == 2" class="chat-message-wrap">-->
+<!--<div class="message-content" ng-class="{maxContentWidth:tC.chatExpandMobile}">-->
+<!--<span id="arrow-left"></span>-->
+<!--\{{i.message}}-->
+<!--</div>-->
+<!--</div>-->

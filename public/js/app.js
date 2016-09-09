@@ -1,4 +1,4 @@
-var app = angular.module('todo', ['ui.materialize']);
+var app = angular.module('todo', ['ui.materialize', 'ngAnimate']);
 
 
 

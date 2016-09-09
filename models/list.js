@@ -7,11 +7,17 @@ var ObjectId = require('mongodb').ObjectID;
 
 var ListSchema = mongoose.Schema({   //define data collection schema
     user_ids: [
-        {type:String}
+        {type: String}
+    ],
+    messages: [
+       
     ],
     listTitle: {
         type: String,
         index:true
+    },
+    shared:{
+        type: Boolean
     },
     active:{
         type: Boolean
@@ -30,7 +36,7 @@ var List = module.exports = mongoose.model('List', ListSchema);
 
 //get all list for user
 module.exports.getList = function(UserId, callback){
-
+    console.log('find list by id ', UserId);
     List.find({
         user_ids:{$in:[UserId]},
         active: 1
@@ -45,6 +51,7 @@ module.exports.getListItem = function(listId, callback){
 };
 
 module.exports.updateList = function(listId, title, callback){
+
   List.update({
           _id: ObjectId(listId)
       }, {
@@ -57,7 +64,9 @@ module.exports.updateList = function(listId, title, callback){
 module.exports.addUserToList = function(listId, userId, callback){
     console.log('listId ',listId);
     console.log('userId ',userId);
-    
+
+    //set it to active
+
     List.update({
             _id: ObjectId(listId)
         },
@@ -67,6 +76,21 @@ module.exports.addUserToList = function(listId, userId, callback){
         {
             safe: true, upsert: true, new : true
         }, callback)
+};
+
+module.exports.saveChatMessage = function(message, listId, userName, date, userId, callback){
+    console.log('listId ',listId);
+    console.log('message ',message);
+
+    List.update({
+            _id: ObjectId(listId)
+        },
+        {
+            $push: {"messages": {userName: userName, message:message, date: date, userId: userId}}
+        },
+        {
+            safe: true, upsert: true, new : true
+        }, callback);
 };
 
 

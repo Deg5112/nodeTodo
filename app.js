@@ -14,6 +14,9 @@ var mongoose = require('mongoose');
 var configAuth = require('./config/auth');
 var options = configAuth.mongo.options;
 var os = require("os");
+var dateFormat = require('dateformat');
+var ObjectId = require('mongodb').ObjectID;
+
 var hostname = os.hostname();
 if(hostname == 'node'){
     mongoose.connect('mongodb://localhost/todo', options);
@@ -21,7 +24,7 @@ if(hostname == 'node'){
     mongoose.connect('mongodb://localhost/todo');
 }
 var db = mongoose.connection;
-console.log('db', db);
+// console.log('db', db);
 //init app
 var app = express();
 var server = require('http').createServer(app);
@@ -30,6 +33,7 @@ var io = require('socket.io').listen(server);
 //include listmodel and task model, you'll split this w/ io listeners up later with module.exports/require
 var List = require('./models/list.js');
 var Todo = require('./models/todo.js');
+var User = require('./models/user.js');
 
 
 app.set('views', path.join(__dirname, 'views'));  //__dirname is root directory.. saying views is set to views directory
@@ -88,13 +92,13 @@ app.use(function(req, res, next){
 });
 var routes = require('./routes/index');
 var users = require('./routes/users');  //everything in this file gets hit once we require it
-var tasks = require('./routes/tasks');
+var todos = require('./routes/todos');
 
 
 
 app.use('/', routes);  //routes defined for '/', will be directed to routes directory/index
 app.use('/users', users); //routes defined for users will be directed to routes directory/users directory
-app.use('/tasks', tasks);
+app.use('/todos', todos);
 
 app.set('port', (process.env.PORT || 3000));
 // process.on('uncaughtException', function (err) {
@@ -133,8 +137,10 @@ io.sockets.on('connection', function(socket){
         var listItem = new List({
             // user_ids: [{text: data.userId}],
             listTitle: data.listItem.listTitle,
-            active: true
+            active: true,
+            shared: false
         });
+        
         listItem.user_ids.push(data.userId);
         
         listItem.save(function(err, object){
@@ -143,9 +149,11 @@ io.sockets.on('connection', function(socket){
             console.log(object);
             
             data.listItem._id = object._id;
+            socket.join(object._id);
+            
             data.listItem.user_ids = object.user_ids;
             console.log(data);  
-            io.sockets.emit('listCreationSuccess', data); //ideally you'll want to emit this to only to the room the socket is in for that list
+            io.sockets.to(object._id).emit('listCreationSuccess', data); //ideally you'll want to emit this to only to the room the socket is in for that list
         });
 
     });
@@ -153,25 +161,53 @@ io.sockets.on('connection', function(socket){
     socket.on('getList', function(data){
         var returnObj = {};
        List.getList(data.userId, function(err, response){
+           
+           console.log('List  !',response);
+           
            var stringify = JSON.stringify(response);
-           io.sockets.emit('getListResponse',stringify);
+           socket.join(data.userId);
+           
+           io.sockets.to(data.userId).emit('getListResponse',stringify);
        });
         
     });
 
     socket.on('deleteList', function(data){
         List.deleteList(data, function(){
-            io.sockets.emit('deleteListResponse', data);    
+            console.log('delete data',data);
+            socket.join(data.itemId);
+            io.sockets.to(data.itemId).emit('deleteListResponse', data);    
         });
     });
     
     socket.on('getTodos', function(data){
         console.log(data);
         Todo.getTodos(data.listId, function(err, data){
-            console.log(data);
-            var stringify = JSON.stringify(data);
-            io.sockets.emit('getTodosResponse',stringify);
+            
+            // var stringifyTodoArray = JSON.stringify(data);
+            
+            socket.join(data.listId);
+            
+            List.find({
+                _id: ObjectId('57ce6f481ab74ca1353dc425')
+            }, function (err, list) {
+                if(err) throw err;
+                console.log('LIST ',list);
+                var messages = list[0].messages;
+                console.log('messages!!', messages);
+                
+                var returnObj = {
+                    todos: data,
+                    messages:messages
+                };
+                io.sockets.to(data.listId).emit('getTodosResponse',JSON.stringify(returnObj));
+            });
+
+            // return;
+           
+       
         });
+        
        
     });
     
@@ -185,7 +221,9 @@ io.sockets.on('connection', function(socket){
             if(err){
                 throw err
             }
-           io.sockets.emit('createTodoResponse', data);
+
+            socket.join(data.listId);
+            io.sockets.to(data.listId).emit('createTodoResponse', data);
         });
     });
 
@@ -194,12 +232,97 @@ io.sockets.on('connection', function(socket){
         Todo.deleteTodo(data.itemId, function(err, response){
             console.log(data);
             var stringify = JSON.stringify(data);
-            io.sockets.emit('deleteTodoResponse',stringify);
+            socket.join(data.itemId);
+            io.sockets.to(data.itemId).emit('deleteTodoResponse',stringify);
+        });
+    });
+
+    socket.on('isListShared', function(data){
+        console.log('list shared!?');
+        
+        var listId = data.listId;
+        List.getListItem(listId, function(err, listItem){
+            console.log('listItem',listItem[0]);
+            var sharedBool = listItem[0].user_ids.length > 1;
+            console.log('shared ',sharedBool);
+
+            if(sharedBool){
+                //join room with room name being list id
+                socket.join(data.userId);//send just to user
+                
+                socket.join(listId); //for emmitting to users in channel
+                
+                var userIdsArray = listItem[0].user_ids;
+                var userIdsArrayLength = userIdsArray.length;
+                //also return name, or group if group
+                
+                if(userIdsArrayLength > 2){
+                    io.sockets.to(data.userId).emit('isListSharedResponse',{shared: sharedBool, sharedName: 'Group'});
+                }else{
+
+                    for(var x=0;x<userIdsArrayLength;x++){
+
+                        if(userIdsArray[x] != data.userId){
+                            console.log('loop user', data.userId);
+                            
+                            User.getUserById(userIdsArray[x], function(err, user){
+                                
+                                if(err) throw err;
+
+                                io.sockets.to(data.userId).emit('isListSharedResponse',{shared: sharedBool, sharedName: user.local.name});
+                            });
+                            break;
+                        }else{
+                            console.log('Nope!!');
+                        }
+                    }
+                }
+            }else{
+
+            }
+        });
+    });
+
+    socket.on('sendChatMessage', function(data){
+       var listId = data.listId;
+        
+        //get current user by id
+        User.getUserById(data.userId, function(err, user){
+           var userId = user._id;
+           if(err) throw err;
+            
+            if(user){
+                var now = new Date();
+                
+                var date = dateFormat(now, "dddd, mmmm dS, yyyy, h:MM:ss TT");
+                List.saveChatMessage(data.message, listId, user.local.name, date, userId, function(err, mongoResponse){
+                    if(err){
+                        throw err;
+                    }
+                    if(mongoResponse){
+                        
+                        console.log(mongoResponse);
+                        data.date = date;
+                        
+                        if((mongoResponse.nModified == 1 && mongoResponse.n == 1)||(mongoResponse.nModified == 0 && mongoResponse.n == 1)){
+                            io.sockets.to(listId).emit('sendChatResponse',data);
+                        }
+                        if(mongoResponse.nModified == 0 && mongoResponse.n == 0){
+                            console.log('update failed');
+                        }
+                    }
+                });
+            }else{
+                console.log('no user found');
+            }
         });
         
+        //get current user
         
-
+        //store message in db for the shared List
+        
     });
+
     
     
 });

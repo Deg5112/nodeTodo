@@ -174,14 +174,13 @@ io.sockets.on('connection', function(socket){
 
     socket.on('deleteList', function(data){
         List.deleteList(data, function(){
-            console.log('delete data',data);
             socket.join(data.itemId);
             io.sockets.to(data.itemId).emit('deleteListResponse', data);    
         });
     });
     
     socket.on('getTodos', function(data){
-        console.log(data);
+        console.log('get todos!',data);
         var listId = data.listId;
         Todo.getTodos(listId, function(err, data){
             
@@ -193,15 +192,14 @@ io.sockets.on('connection', function(socket){
                 _id: ObjectId(listId)
             }, function (err, list) {
                 if(err) throw err;
-                console.log('LIST ',list);
+            
                 var messages = list[0].messages;
-                console.log('messages!!', messages);
                 
                 var returnObj = {
                     todos: data,
                     messages:messages
                 };
-                io.sockets.to(data.listId).emit('getTodosResponse',JSON.stringify(returnObj));
+                io.sockets.to(listId).emit('getTodosResponse',JSON.stringify(returnObj));
             });
 
             // return;
@@ -229,9 +227,9 @@ io.sockets.on('connection', function(socket){
     });
 
     socket.on('deleteTodo', function(data){
-        console.log(data);
+      
         Todo.deleteTodo(data.itemId, function(err, response){
-            console.log(data);
+           
             var stringify = JSON.stringify(data);
             socket.join(data.itemId);
             io.sockets.to(data.itemId).emit('deleteTodoResponse',stringify);
@@ -239,13 +237,12 @@ io.sockets.on('connection', function(socket){
     });
 
     socket.on('isListShared', function(data){
-        console.log('list shared!?');
         
         var listId = data.listId;
         List.getListItem(listId, function(err, listItem){
-            console.log('listItem',listItem[0]);
+          
             var sharedBool = listItem[0].user_ids.length > 1;
-            console.log('shared ',sharedBool);
+          
 
             if(sharedBool){
                 //join room with room name being list id
@@ -264,7 +261,6 @@ io.sockets.on('connection', function(socket){
                     for(var x=0;x<userIdsArrayLength;x++){
 
                         if(userIdsArray[x] != data.userId){
-                            console.log('loop user', data.userId);
                             
                             User.getUserById(userIdsArray[x], function(err, user){
                                 

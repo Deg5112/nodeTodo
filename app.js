@@ -182,14 +182,15 @@ io.sockets.on('connection', function(socket){
     
     socket.on('getTodos', function(data){
         console.log(data);
-        Todo.getTodos(data.listId, function(err, data){
+        var listId = data.listId;
+        Todo.getTodos(listId, function(err, data){
             
             // var stringifyTodoArray = JSON.stringify(data);
             
-            socket.join(data.listId);
+            socket.join(listId);
             
             List.find({
-                _id: ObjectId(data.listId)
+                _id: ObjectId(listId)
             }, function (err, list) {
                 if(err) throw err;
                 console.log('LIST ',list);

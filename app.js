@@ -189,7 +189,7 @@ io.sockets.on('connection', function(socket){
             socket.join(data.listId);
             
             List.find({
-                _id: ObjectId('57ce6f481ab74ca1353dc425')
+                _id: ObjectId(data.listId)
             }, function (err, list) {
                 if(err) throw err;
                 console.log('LIST ',list);

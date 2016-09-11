@@ -95,6 +95,7 @@ module.exports.saveChatMessage = function(message, listId, userName, date, userI
 
 
 
+
 //delete task  //might want to soft delete in case you want to look at recently deleted
 module.exports.deleteList = function(list, callback){
     List.update({

@@ -362,15 +362,17 @@ p.blue.white-text.ng-binding.ng-scope {
     margin: 0;
 }
 
+.message-container {
+    padding-left: 0.5em;
+}
 
 div#chat-body {
     max-height: 76%;
     min-height: 76%;
     /*border: 3px solid red;*/
-    overflow-y: scroll;
+    overflow: auto;
     box-sizing: content-box;
     width: 100%;
-    padding-left: .9em;
 }
 
 .message-back-col{

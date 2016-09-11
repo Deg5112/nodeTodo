@@ -3,7 +3,7 @@ var mongoose = require('mongoose');// require mongoose
 var ObjectId = require('mongodb').ObjectID;
 
 //User Schema
-console.log('asdfds');
+
 var TodoSchema = mongoose.Schema({   //define data collection schema
         list_id: {
             type: String,

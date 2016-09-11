@@ -7,7 +7,6 @@ app.controller('todoController', function($scope, $http, $location, $log, $windo
     self.sharedName = null;
     self.listIsShared = false;
     self.chatExpandMobile = false;
-    self.listId = null;
     self.chatExpandDesktop = false;
     self.listId = $location.absUrl().split('/')[4];
     self.chatGroup = false;
@@ -19,10 +18,13 @@ app.controller('todoController', function($scope, $http, $location, $log, $windo
 
     self.getChatMessages = function(){
         //get chat messages
-        $http.get('/getChatMessages').then(function(){
-            
+        console.log('getting messages!');
+        $http.get('/getChatMessages/'+self.listId).then(function(response){
+            console.log(response);
+            self.messages = response.data;
         });
     };
+    self.getChatMessages();
 
     self.getUserId = function(){
         $http.get('/userId').then(function(response){

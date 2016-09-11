@@ -107,12 +107,15 @@ router.post('/saveTodo/:todoId/:listId', function(req, res){
    });
 });
 
-router.get('/getChatMessages', function(req,res){
-   // List.getMessages(, function(err, messages){
-   //    if(err) throw err;
-   //    console.log(messages);
-   // });
-   // res.send(JSON.stringify());
+router.get('/getChatMessages/:listId', function(req,res){
+   var listId = req.params.listId;
+   console.log('LISTID', listId);
+   List.getListItem(listId, function(err, listItem){
+      if(err) throw err;
+      console.log('LISTITEM  ', listItem);
+      res.send(JSON.stringify(listItem[0].messages));
+   });
+  
 });
 
 //todoItem routes

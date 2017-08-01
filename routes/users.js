@@ -359,9 +359,9 @@ router.get('/auth/facebook', passport.authenticate('facebook', {scope: ['email']
 
 //just two different routes.. ^^ sends to facebook.. facebook sends backk too below with success or failure
 // 'callbackUrl': 'http://localhost:3000/auth/facebook/callback'
-router.get('/auth/facebook/callback',
-    passport.authenticate('facebook', { successRedirect: '/',
-        failureRedirect: '/users/login' }));
+router.get('/auth/facebook/callback', passport.authenticate('facebook', {
+    successRedirect: '/',
+    failureRedirect: '/users/login' }));
 
 
 //reset password
@@ -401,7 +401,7 @@ router.post('/resetPassword', function(req, res) {
                             console.log('sent!');
                         });
                         
-                        res.send(JSON.stringify({ success: true}));
+                        res.send(JSON.stringify({success: true}));
                     }
 
                     if(mongoResponse.nModified == 0 && mongoResponse.n == 1){

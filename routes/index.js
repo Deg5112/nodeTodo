@@ -252,10 +252,10 @@ function ensureAuthenticated(req, res, next){
 
          if(user) {
             console.log(user);
-            if (user.local.active) {
+            if (user.local.active || user.facebook) {
                return next();
-            }
-            else {
+
+            } else {
                req.flash('error_msg', 'User not active');
                res.redirect('/users/login');
             }

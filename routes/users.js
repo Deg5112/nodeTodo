@@ -11,8 +11,8 @@ var mongoose = require('mongoose');// require mongoose
 // var sendgrid  = require('sendgrid')(configAuth.sendGrid.user, configAuth.sendGrid.user); //takes api key as parameter
 // console.log(sendgrid);
 var configAuth = require('../config/auth');
-var api_key = configAuth.mailgun.key; 
-var domain = 'davidgoodman.club';
+var api_key = configAuth.mailgun.apiKey;
+var domain = 'todo.davidgoodman.club';
 var mailgun = require('mailgun-js')({apiKey: api_key, domain: domain});
 var os = require("os");
 var hostname = os.hostname();
@@ -255,6 +255,7 @@ router.post('/register', function(req, res){
                 };
 
                 mailgun.messages().send(data, function (error, body) {
+                    console.log('Error : ', error);
                     console.log(body);
                     console.log('sent!');
                 });

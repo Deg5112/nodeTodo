@@ -1,3 +1,7 @@
+body{
+    min-width: 390px;
+}
+
 .header{
     color:#ee6e73;
 }
@@ -24,17 +28,17 @@ button{
     bottom: 10%;
     left:7%;
 }
-.list-item{
 
-}
 .material-icons{
     cursor:pointer;
     padding:6px;
     border-radius: 5px;
 }
+
 .material-icons.circle{
     padding:0;
 }
+
 .material-icons.list-share {
     position: absolute;
     right: 18%;
@@ -45,6 +49,7 @@ button{
     background-color: rgba(238, 110, 115, 0.35);
 
 }
+
 @media screen and (max-width: 482px){
     .material-icons.list-share {
         right: 19%;
@@ -53,6 +58,7 @@ button{
         right: 10%;
     }
 }
+
 @media screen and (min-width: 429px){
     .list-update {
         right: 9%;
@@ -91,6 +97,7 @@ div#back-row {
 div#back-row i{
     padding-left: 0;
 }
+
 div#back-row a{
     position: relative;
     right: .7em;
@@ -103,9 +110,11 @@ div#back-row i:hover{
 i.material-icons.list-delete {
     color: #ee6e73;
 }
+
 i.material-icons {
     font-size: 2.5em;
 }
+
 .material-icons.circle{
     display: none;
 }
@@ -119,10 +128,7 @@ i.material-icons {
     position: absolute;
     top:22%;
     right: 10%;
-
 }
-
-
 
 .list-delete {
     position: absolute;
@@ -146,11 +152,10 @@ i.material-icons {
     top: 47%;
     transform: translateY(-50%);
 }
+
 .list-row{
     position: relative;
-
 }
-
 
 #task-list{
     list-style-type: none;
@@ -165,6 +170,7 @@ i.material-icons {
     margin: 0;
     position: relative;
 }
+
 .well:hover {
     cursor: pointer;
 }
@@ -179,7 +185,6 @@ i.fa.fa-pencil-square-o {
     right: 59%;
     top: 50.5%;
     transform: translateY(-50%);
-
 }
 
 #controls {
@@ -193,19 +198,11 @@ a .list-div {
     color: black;
 }
 
-body{
-    min-width: 390px;
-}
-
-/*#chat-box, #chat-head, #chat-input {*/
-    /*border: 1px solid black;*/
-/*}*/
 #chat-box{
     box-shadow: 0px 3px 3px 0px rgba(.53,1.58,.8,.89);
     position: fixed;
     bottom: 0;
     right:0;
-
 }
 
 .shared-name{
@@ -226,17 +223,12 @@ body{
     cursor: pointer;
 }
 
-
-
-
-
 div#chat-bottom {
     position: absolute;
     bottom: 0;
     width: 100%;
     color: black;
 }
-
 
 button.btn.waves-effect.waves-light.col.s12 {
     z-index: 0;
@@ -255,8 +247,6 @@ button.btn.waves-effect.waves-light.col.s12 {
     display:block;
 }
 
-
-
 #send-message-chat {
     background-color: #F44336;
     color: white;
@@ -273,10 +263,8 @@ button.btn.waves-effect.waves-light.col.s12 {
 }
 
 .chatExpandMobile{
-
     width: 100vw !important;
     height: 100vh !important;
-
 }
 
 .makeBodyTaller{
@@ -357,7 +345,6 @@ span#arrow-left {
     display: inline-block;
 }
 
-
 p.blue.white-text.ng-binding.ng-scope {
     margin: 0;
 }
@@ -394,19 +381,15 @@ i#chat-vert-icon {
     border-bottom: 1px solid rgba(64, 51, 45, 0.35);
 }
 
-
 .message-content.content-mine {
     /*position: relative;*/
     /*float: right;*/
     /*top: 8px;*/
 }
 
-
-
 #chat-vert-icon, #chat-message-back{
     color: white;
 }
-
 
 .chat-message p {
     padding: .5em;

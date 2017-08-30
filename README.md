@@ -1,1 +1,5 @@
 # nodeTodo
+
+MEAN Stack Todo application, meaning this app is built entirely on a NoSQL database called MongoDB, with Nodejs + Express as the backend stack, along with AngularJS on the front end, Web Sockets for real time data updates, and a newer CSS framework called materialize by Google. You can even share a list with a friend, and chat with them in the app.
+
+Other features: Authentication & Social Sign-On strategies utilizing Passport.js, Mongoose ORM for interfacing with MongoDB, handlebars templating engine, express validator for backend form validation, connect-mongo for persistent sessions, Materialize Toasts/dialogs for flash messages, Email Verification & Password Resets, optimized for mobile. The goal for this project is to provide a boiler plate app that has all of the tools you need to build other MEAN stack applications

@@ -190,12 +190,13 @@ router.post('/register', function(req, res){
             }
           });
 	      
-          if (hostname == 'node') {
-              var verificationHref = 'http://davidgoodman-node.club/users/verify/' + encryptedEmailString;
-          } else {
-              var verificationHref = 'http://localhost:3000/users/verify/' + encryptedEmailString;
-          }
-
+          // if (hostname == 'node') {
+          //     var verificationHref = 'http://davidgoodman-node.club/users/verify/' + encryptedEmailString;
+          // } else {
+          //     var verificationHref = 'http://localhost:3000/users/verify/' + encryptedEmailString;
+          // }
+	      
+	        var verificationHref = 'http://davidgoodman-node.club/users/verify/' + encryptedEmailString;
           var html =
               '<div style="margin:1% 3%;font-family: sans-serif;">'
               + '<div>'

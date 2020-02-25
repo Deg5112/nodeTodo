@@ -1,6 +1,3 @@
-./config
 node_modules
-auth.js
 gmailAuth.js
 app.js
-auth.js

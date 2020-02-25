@@ -14,7 +14,7 @@ var mongoose = require('mongoose');
 var configAuth = require('./config/auth');
 // var options = configAuth.mongo.options;
 var os = require("os");
-var dateFormat = require('dateformat');
+var dateFormat = require('dateformat'); //
 var ObjectId = require('mongodb').ObjectID;
 
 mongoose.connect('mongodb://localhost/todo');
@@ -109,7 +109,7 @@ app.use(function(req, res, next){
       res.send({ error: 'Not found' });
       return;
   }
-	
+
   res.type('txt').send('Not found');
 });
 
@@ -126,15 +126,15 @@ io.sockets.on('connection', function(socket){
       active: true,
       shared: false
     });
-    
+
     listItem.user_ids.push(data.userId);
-    
+
     listItem.save(function(err, object){
       if(err) throw err;
-      
+
       data.listItem._id = object._id;
       socket.join(object._id);
-      
+
       data.listItem.user_ids = object.user_ids;
       io.sockets.to(object._id).emit('listCreationSuccess', data);
     });
@@ -145,7 +145,7 @@ io.sockets.on('connection', function(socket){
 	  List.getList(data.userId, function(err, response){
        var stringify = JSON.stringify(response);
        socket.join(data.userId);
-       
+
        io.sockets.to(data.userId).emit('getListResponse',stringify);
      });
   });
@@ -156,19 +156,19 @@ io.sockets.on('connection', function(socket){
       io.sockets.to(data.itemId).emit('deleteListResponse', data);
     });
   });
-  
+
   socket.on('getTodos', function(data){
     var listId = data.listId;
     Todo.getTodos(listId, function(err, data){
       socket.join(listId);
-      
+
       List.find({
           _id: ObjectId(listId)
       }, function (err, list) {
         if(err) throw err;
-    
+
         var messages = list[0].messages;
-        
+
         var returnObj = {
             todos: data,
             messages:messages
@@ -177,14 +177,14 @@ io.sockets.on('connection', function(socket){
       });
     });
   });
-  
+
   socket.on('createTodo', function(data){
     var TodoItem = new Todo({
         list_id: data.listId,
         title: data.title,
         active: true
     });
-    
+
     TodoItem.save(function(err, data){
         if(err){
             throw err
@@ -207,26 +207,26 @@ io.sockets.on('connection', function(socket){
       var listId = data.listId;
       List.getListItem(listId, function(err, listItem){
           var sharedBool = listItem[0].user_ids.length > 1;
-	      
+
           if(sharedBool){
             //join room with room name being list id
             socket.join(data.userId);//send just to user
-            
+
             socket.join(listId); //for emmitting to users in channel
-            
+
             var userIdsArray = listItem[0].user_ids;
             var userIdsArrayLength = userIdsArray.length;
             //also return name, or group if group
-              
+
             if(userIdsArrayLength > 2){
                 io.sockets.to(data.userId).emit('isListSharedResponse',{shared: sharedBool, sharedName: 'Group'});
             } else {
                 for(var x=0;x<userIdsArrayLength;x++){
 
                     if(userIdsArray[x] != data.userId){
-                        
+
                         User.getUserById(userIdsArray[x], function(err, user){
-                            
+
                             if(err) throw err;
 
                             io.sockets.to(data.userId).emit('isListSharedResponse',{shared: sharedBool, sharedName: user.local.name});
@@ -243,15 +243,15 @@ io.sockets.on('connection', function(socket){
 
 	socket.on('sendChatMessage', function(data){
 		var listId = data.listId;
-    
+
     //get current user by id
     User.getUserById(data.userId, function(err, user){
      var userId = user._id;
      if(err) throw err;
-     
+
      if(user){
 	     var now = new Date();
-          
+
 	     var date = dateFormat(now, "dddd, mmmm dS, yyyy, h:MM:ss TT");
 	     List.saveChatMessage(data.message, listId, user.local.name, date, userId, function(err, mongoResponse){
 					if(err){
